@@ -1,0 +1,27 @@
+{
+    IBClasses = (
+        {CLASS = NSSegmentedControl; LANGUAGE = ObjC; SUPERCLASS = NSControl; }, 
+        {
+            ACTIONS = {
+                changeMode = id; 
+                filter = id; 
+                focusSearch = id; 
+                goBack = id; 
+                goForward = id; 
+                navigate = id; 
+                search = id; 
+            }; 
+            CLASS = SymbolistRuntimeDocument; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                "_filterField" = NSTextField; 
+                "_navigationControl" = NSSegmentedControl; 
+                "_searchField" = NSComboBox; 
+                "_textView" = NSTextView; 
+                "_typePopup" = NSPopUpButton; 
+            }; 
+            SUPERCLASS = NSDocument; 
+        }
+    ); 
+    IBVersion = 1; 
+}

@@ -1,0 +1,26 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {
+                filter = id; 
+                focusSearch = id; 
+                goBack = id; 
+                goForward = id; 
+                navigate = id; 
+                searchForClassName = id; 
+            }; 
+            CLASS = ClassMethodsDocument; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                "_filterField" = NSTextField; 
+                "_navigationControl" = NSSegmentedControl; 
+                "_searchField" = NSTextField; 
+                "_textView" = NSTextView; 
+                "_typePopup" = NSPopUpButton; 
+            }; 
+            SUPERCLASS = NSDocument; 
+        }, 
+        {CLASS = NSSegmentedControl; LANGUAGE = ObjC; SUPERCLASS = NSControl; }
+    ); 
+    IBVersion = 1; 
+}

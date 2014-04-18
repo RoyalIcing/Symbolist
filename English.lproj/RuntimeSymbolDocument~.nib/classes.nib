@@ -1,0 +1,47 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {
+                filter = id; 
+                focusSearch = id; 
+                goBack = id; 
+                goForward = id; 
+                navigate = id; 
+                searchForClassName = id; 
+            }; 
+            CLASS = ClassMethodsDocument; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                "_filterField" = NSTextField; 
+                "_navigationControl" = NSSegmentedControl; 
+                "_searchField" = NSTextField; 
+                "_textView" = NSTextView; 
+                "_typePopup" = NSPopUpButton; 
+            }; 
+            SUPERCLASS = NSDocument; 
+        }, 
+        {CLASS = NSSegmentedControl; LANGUAGE = ObjC; SUPERCLASS = NSControl; }, 
+        {
+            ACTIONS = {
+                changeType = id; 
+                filter = id; 
+                focusSearch = id; 
+                goBack = id; 
+                goForward = id; 
+                navigate = id; 
+                searchForClassName = id; 
+            }; 
+            CLASS = RuntimeSymbolDocument; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                "_filterField" = NSTextField; 
+                "_navigationControl" = NSSegmentedControl; 
+                "_searchField" = NSComboBox; 
+                "_textView" = NSTextView; 
+                "_typePopup" = NSPopUpButton; 
+            }; 
+            SUPERCLASS = NSDocument; 
+        }
+    ); 
+    IBVersion = 1; 
+}

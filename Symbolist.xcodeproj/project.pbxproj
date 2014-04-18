@@ -1,0 +1,542 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		8D15AC2C0486D014006FF6A4 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */; };
+		8D15AC2D0486D014006FF6A4 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 2A37F4B6FDCFA73011CA2CEA /* MainMenu.nib */; };
+		8D15AC2E0486D014006FF6A4 /* SymbolistBinaryDocument.nib in Resources */ = {isa = PBXBuildFile; fileRef = 2A37F4B4FDCFA73011CA2CEA /* SymbolistBinaryDocument.nib */; };
+		8D15AC2F0486D014006FF6A4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165FFE840EACC02AAC07 /* InfoPlist.strings */; };
+		8D15AC310486D014006FF6A4 /* SymbolistBinaryDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A37F4ACFDCFA73011CA2CEA /* SymbolistBinaryDocument.m */; settings = {ATTRIBUTES = (); }; };
+		8D15AC320486D014006FF6A4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A37F4B0FDCFA73011CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
+		8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */; };
+		9F09C60A0CF277910010B6A1 /* SymbolistToolbarItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F09C6090CF277910010B6A1 /* SymbolistToolbarItem.m */; };
+		9F17BD760FF2FF6C00767BB4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F17BD6F0FF2FF2000767BB4 /* main.m */; };
+		9F59BD8C0D2CF21800D22881 /* SymbolistTypeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F59BD8B0D2CF21800D22881 /* SymbolistTypeViewController.m */; };
+		9F59BD910D2CF27F00D22881 /* SymbolistRuntimeLister.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F59BD900D2CF27F00D22881 /* SymbolistRuntimeLister.m */; };
+		9FA8B1180D6E553600892635 /* SymbolistBinaryEntry+Demangle.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FA8B1170D6E553600892635 /* SymbolistBinaryEntry+Demangle.mm */; };
+		9FBE319F0CF188EA00A65156 /* SymbolistRuntimeDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBE319E0CF188EA00A65156 /* SymbolistRuntimeDocument.m */; };
+		9FBE324D0CF18E6100A65156 /* SymbolistRuntimeDocument.nib in Resources */ = {isa = PBXBuildFile; fileRef = 9FBE324B0CF18E6100A65156 /* SymbolistRuntimeDocument.nib */; };
+		9FCF8D5C0D2B22D700A327EC /* SymbolistInfoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FCF8D5B0D2B22D700A327EC /* SymbolistInfoView.m */; };
+		9FCF8D610D2B230500A327EC /* SymbolistRuntimeEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FCF8D600D2B230500A327EC /* SymbolistRuntimeEntry.m */; };
+		9FE7D1CD0BF5ABA700C2AB0F /* SymbolistDocumentController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE7D1CC0BF5ABA700C2AB0F /* SymbolistDocumentController.m */; };
+		9FE9E7260BF4A2010059DB9E /* SymbolistBinaryLister.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE9E7250BF4A2010059DB9E /* SymbolistBinaryLister.m */; };
+		9FE9E8A70BF4B8600059DB9E /* SymbolistBinaryEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE9E8A60BF4B8600059DB9E /* SymbolistBinaryEntry.m */; };
+		9FEF0FBD0BF406F300EED6C6 /* SymbolistAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEF0FBB0BF406F200EED6C6 /* SymbolistAppDelegate.m */; };
+		9FFDB7370D6EFCDC00FBED07 /* PSStringSearch.h in Resources */ = {isa = PBXBuildFile; fileRef = 9FFDB7360D6EFCDC00FBED07 /* PSStringSearch.h */; };
+		9FFDB73B0D6EFD1000FBED07 /* PSStringSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFDB73A0D6EFD1000FBED07 /* PSStringSearch.m */; };
+		CDDB023E0D5014FB00A5378D /* SymbolistBinaryError.m in Sources */ = {isa = PBXBuildFile; fileRef = CDDB023D0D5014FB00A5378D /* SymbolistBinaryError.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		089C1660FE840EACC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		13E42FBA07B3F13500E4EEF1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
+		2A37F4ACFDCFA73011CA2CEA /* SymbolistBinaryDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SymbolistBinaryDocument.m; sourceTree = "<group>"; };
+		2A37F4AEFDCFA73011CA2CEA /* SymbolistBinaryDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolistBinaryDocument.h; sourceTree = "<group>"; };
+		2A37F4B0FDCFA73011CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		2A37F4B5FDCFA73011CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/SymbolistBinaryDocument.nib; sourceTree = "<group>"; };
+		2A37F4B7FDCFA73011CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MainMenu.nib; sourceTree = "<group>"; };
+		2A37F4BAFDCFA73011CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = English; path = English.lproj/Credits.rtf; sourceTree = "<group>"; };
+		2A37F4C4FDCFA73011CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
+		2A37F4C5FDCFA73011CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		32DBCF750370BD2300C91783 /* Symbolist_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Symbolist_Prefix.pch; sourceTree = "<group>"; };
+		8D15AC360486D014006FF6A4 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		8D15AC370486D014006FF6A4 /* Symbolist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Symbolist.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9F09C6000CF277900010B6A1 /* SymbolistToolbarItem.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SymbolistToolbarItem.h; sourceTree = "<group>"; };
+		9F09C6090CF277910010B6A1 /* SymbolistToolbarItem.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = SymbolistToolbarItem.m; sourceTree = "<group>"; };
+		9F17BD550FF2FE3100767BB4 /* SymbolistHelper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = SymbolistHelper; sourceTree = BUILT_PRODUCTS_DIR; };
+		9F17BD6F0FF2FF2000767BB4 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		9F59BD8A0D2CF21800D22881 /* SymbolistTypeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolistTypeViewController.h; sourceTree = "<group>"; };
+		9F59BD8B0D2CF21800D22881 /* SymbolistTypeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SymbolistTypeViewController.m; sourceTree = "<group>"; };
+		9F59BD8F0D2CF27F00D22881 /* SymbolistRuntimeLister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolistRuntimeLister.h; sourceTree = "<group>"; };
+		9F59BD900D2CF27F00D22881 /* SymbolistRuntimeLister.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SymbolistRuntimeLister.m; sourceTree = "<group>"; };
+		9FA8B1170D6E553600892635 /* SymbolistBinaryEntry+Demangle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "SymbolistBinaryEntry+Demangle.mm"; sourceTree = "<group>"; };
+		9FBE319D0CF188EA00A65156 /* SymbolistRuntimeDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolistRuntimeDocument.h; sourceTree = "<group>"; };
+		9FBE319E0CF188EA00A65156 /* SymbolistRuntimeDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SymbolistRuntimeDocument.m; sourceTree = "<group>"; };
+		9FBE324C0CF18E6100A65156 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/SymbolistRuntimeDocument.nib; sourceTree = "<group>"; };
+		9FCF8D520D2B22D700A327EC /* SymbolistInfoView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SymbolistInfoView.h; sourceTree = "<group>"; };
+		9FCF8D5B0D2B22D700A327EC /* SymbolistInfoView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = SymbolistInfoView.m; sourceTree = "<group>"; };
+		9FCF8D5F0D2B230500A327EC /* SymbolistRuntimeEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolistRuntimeEntry.h; sourceTree = "<group>"; };
+		9FCF8D600D2B230500A327EC /* SymbolistRuntimeEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SymbolistRuntimeEntry.m; sourceTree = "<group>"; };
+		9FE7D1CB0BF5ABA700C2AB0F /* SymbolistDocumentController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolistDocumentController.h; sourceTree = "<group>"; };
+		9FE7D1CC0BF5ABA700C2AB0F /* SymbolistDocumentController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SymbolistDocumentController.m; sourceTree = "<group>"; };
+		9FE9E7240BF4A2010059DB9E /* SymbolistBinaryLister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolistBinaryLister.h; sourceTree = "<group>"; };
+		9FE9E7250BF4A2010059DB9E /* SymbolistBinaryLister.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SymbolistBinaryLister.m; sourceTree = "<group>"; };
+		9FE9E8A50BF4B8600059DB9E /* SymbolistBinaryEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolistBinaryEntry.h; sourceTree = "<group>"; };
+		9FE9E8A60BF4B8600059DB9E /* SymbolistBinaryEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SymbolistBinaryEntry.m; sourceTree = "<group>"; };
+		9FEF0FBB0BF406F200EED6C6 /* SymbolistAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = SymbolistAppDelegate.m; sourceTree = "<group>"; };
+		9FEF0FBC0BF406F300EED6C6 /* SymbolistAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SymbolistAppDelegate.h; sourceTree = "<group>"; };
+		9FFDB7360D6EFCDC00FBED07 /* PSStringSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSStringSearch.h; sourceTree = "<group>"; };
+		9FFDB73A0D6EFD1000FBED07 /* PSStringSearch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSStringSearch.m; sourceTree = "<group>"; };
+		CDDB023C0D5014FB00A5378D /* SymbolistBinaryError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolistBinaryError.h; sourceTree = "<group>"; };
+		CDDB023D0D5014FB00A5378D /* SymbolistBinaryError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SymbolistBinaryError.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8D15AC330486D014006FF6A4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9F17BD530FF2FE3100767BB4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1058C7A6FEA54F5311CA2CBB /* Linked Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */,
+			);
+			name = "Linked Frameworks";
+			sourceTree = "<group>";
+		};
+		1058C7A8FEA54F5311CA2CBB /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2A37F4C4FDCFA73011CA2CEA /* AppKit.framework */,
+				13E42FBA07B3F13500E4EEF1 /* CoreData.framework */,
+				2A37F4C5FDCFA73011CA2CEA /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		19C28FB0FE9D524F11CA2CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8D15AC370486D014006FF6A4 /* Symbolist.app */,
+				9F17BD550FF2FE3100767BB4 /* SymbolistHelper */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		2A37F4AAFDCFA73011CA2CEA /* Symbolist */ = {
+			isa = PBXGroup;
+			children = (
+				9F17BD660FF2FE9A00767BB4 /* Core */,
+				2A37F4ABFDCFA73011CA2CEA /* App */,
+				9F17BD6D0FF2FF0400767BB4 /* Helper Tool */,
+				2A37F4AFFDCFA73011CA2CEA /* Other Sources */,
+				2A37F4B8FDCFA73011CA2CEA /* Resources */,
+				2A37F4C3FDCFA73011CA2CEA /* Frameworks */,
+				19C28FB0FE9D524F11CA2CBB /* Products */,
+			);
+			name = Symbolist;
+			sourceTree = "<group>";
+		};
+		2A37F4ABFDCFA73011CA2CEA /* App */ = {
+			isa = PBXGroup;
+			children = (
+				2A37F4B0FDCFA73011CA2CEA /* main.m */,
+				9FE671FA0D2CEAFA00206B59 /* Master Controllers */,
+				9FE671F80D2CEAC800206B59 /* Binary Document */,
+				9FE671F90D2CEAD500206B59 /* Runtime Document */,
+				9F59BDC80D2CF5D500D22881 /* View */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		2A37F4AFFDCFA73011CA2CEA /* Other Sources */ = {
+			isa = PBXGroup;
+			children = (
+				32DBCF750370BD2300C91783 /* Symbolist_Prefix.pch */,
+			);
+			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		2A37F4B8FDCFA73011CA2CEA /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */,
+				2A37F4B6FDCFA73011CA2CEA /* MainMenu.nib */,
+				2A37F4B4FDCFA73011CA2CEA /* SymbolistBinaryDocument.nib */,
+				9FBE324B0CF18E6100A65156 /* SymbolistRuntimeDocument.nib */,
+				8D15AC360486D014006FF6A4 /* Info.plist */,
+				089C165FFE840EACC02AAC07 /* InfoPlist.strings */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		2A37F4C3FDCFA73011CA2CEA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1058C7A6FEA54F5311CA2CBB /* Linked Frameworks */,
+				1058C7A8FEA54F5311CA2CBB /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		9F17BD660FF2FE9A00767BB4 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				9FFDB7360D6EFCDC00FBED07 /* PSStringSearch.h */,
+				9FFDB73A0D6EFD1000FBED07 /* PSStringSearch.m */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		9F17BD6D0FF2FF0400767BB4 /* Helper Tool */ = {
+			isa = PBXGroup;
+			children = (
+				9F17BD6F0FF2FF2000767BB4 /* main.m */,
+			);
+			path = "Helper Tool";
+			sourceTree = "<group>";
+		};
+		9F59BDC80D2CF5D500D22881 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				9F09C6000CF277900010B6A1 /* SymbolistToolbarItem.h */,
+				9F09C6090CF277910010B6A1 /* SymbolistToolbarItem.m */,
+				9FCF8D520D2B22D700A327EC /* SymbolistInfoView.h */,
+				9FCF8D5B0D2B22D700A327EC /* SymbolistInfoView.m */,
+			);
+			name = View;
+			sourceTree = "<group>";
+		};
+		9FE671F80D2CEAC800206B59 /* Binary Document */ = {
+			isa = PBXGroup;
+			children = (
+				2A37F4AEFDCFA73011CA2CEA /* SymbolistBinaryDocument.h */,
+				2A37F4ACFDCFA73011CA2CEA /* SymbolistBinaryDocument.m */,
+				9FE9E7240BF4A2010059DB9E /* SymbolistBinaryLister.h */,
+				9FE9E7250BF4A2010059DB9E /* SymbolistBinaryLister.m */,
+				9FE9E8A50BF4B8600059DB9E /* SymbolistBinaryEntry.h */,
+				9FE9E8A60BF4B8600059DB9E /* SymbolistBinaryEntry.m */,
+				9FA8B1170D6E553600892635 /* SymbolistBinaryEntry+Demangle.mm */,
+				CDDB023C0D5014FB00A5378D /* SymbolistBinaryError.h */,
+				CDDB023D0D5014FB00A5378D /* SymbolistBinaryError.m */,
+			);
+			name = "Binary Document";
+			sourceTree = "<group>";
+		};
+		9FE671F90D2CEAD500206B59 /* Runtime Document */ = {
+			isa = PBXGroup;
+			children = (
+				9FBE319D0CF188EA00A65156 /* SymbolistRuntimeDocument.h */,
+				9FBE319E0CF188EA00A65156 /* SymbolistRuntimeDocument.m */,
+				9F59BD8F0D2CF27F00D22881 /* SymbolistRuntimeLister.h */,
+				9F59BD900D2CF27F00D22881 /* SymbolistRuntimeLister.m */,
+				9FCF8D5F0D2B230500A327EC /* SymbolistRuntimeEntry.h */,
+				9FCF8D600D2B230500A327EC /* SymbolistRuntimeEntry.m */,
+				9F59BD8A0D2CF21800D22881 /* SymbolistTypeViewController.h */,
+				9F59BD8B0D2CF21800D22881 /* SymbolistTypeViewController.m */,
+			);
+			name = "Runtime Document";
+			sourceTree = "<group>";
+		};
+		9FE671FA0D2CEAFA00206B59 /* Master Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				9FEF0FBC0BF406F300EED6C6 /* SymbolistAppDelegate.h */,
+				9FEF0FBB0BF406F200EED6C6 /* SymbolistAppDelegate.m */,
+				9FE7D1CB0BF5ABA700C2AB0F /* SymbolistDocumentController.h */,
+				9FE7D1CC0BF5ABA700C2AB0F /* SymbolistDocumentController.m */,
+			);
+			name = "Master Controllers";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		8D15AC270486D014006FF6A4 /* Symbolist */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C05733C708A9546B00998B17 /* Build configuration list for PBXNativeTarget "Symbolist" */;
+			buildPhases = (
+				8D15AC2B0486D014006FF6A4 /* Resources */,
+				8D15AC300486D014006FF6A4 /* Sources */,
+				8D15AC330486D014006FF6A4 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Symbolist;
+			productInstallPath = "$(HOME)/Applications";
+			productName = Symbolist;
+			productReference = 8D15AC370486D014006FF6A4 /* Symbolist.app */;
+			productType = "com.apple.product-type.application";
+		};
+		9F17BD540FF2FE3100767BB4 /* SymbolistHelper */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9F17BD650FF2FE7000767BB4 /* Build configuration list for PBXNativeTarget "SymbolistHelper" */;
+			buildPhases = (
+				9F17BD520FF2FE3100767BB4 /* Sources */,
+				9F17BD530FF2FE3100767BB4 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SymbolistHelper;
+			productName = SymbolistHelper;
+			productReference = 9F17BD550FF2FE3100767BB4 /* SymbolistHelper */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		2A37F4A9FDCFA73011CA2CEA /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0510;
+			};
+			buildConfigurationList = C05733CB08A9546B00998B17 /* Build configuration list for PBXProject "Symbolist" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 1;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 2A37F4AAFDCFA73011CA2CEA /* Symbolist */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8D15AC270486D014006FF6A4 /* Symbolist */,
+				9F17BD540FF2FE3100767BB4 /* SymbolistHelper */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		8D15AC2B0486D014006FF6A4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D15AC2C0486D014006FF6A4 /* Credits.rtf in Resources */,
+				8D15AC2D0486D014006FF6A4 /* MainMenu.nib in Resources */,
+				8D15AC2E0486D014006FF6A4 /* SymbolistBinaryDocument.nib in Resources */,
+				8D15AC2F0486D014006FF6A4 /* InfoPlist.strings in Resources */,
+				9FBE324D0CF18E6100A65156 /* SymbolistRuntimeDocument.nib in Resources */,
+				9FFDB7370D6EFCDC00FBED07 /* PSStringSearch.h in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8D15AC300486D014006FF6A4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D15AC310486D014006FF6A4 /* SymbolistBinaryDocument.m in Sources */,
+				8D15AC320486D014006FF6A4 /* main.m in Sources */,
+				9FEF0FBD0BF406F300EED6C6 /* SymbolistAppDelegate.m in Sources */,
+				9FE9E7260BF4A2010059DB9E /* SymbolistBinaryLister.m in Sources */,
+				9FE9E8A70BF4B8600059DB9E /* SymbolistBinaryEntry.m in Sources */,
+				9FE7D1CD0BF5ABA700C2AB0F /* SymbolistDocumentController.m in Sources */,
+				9FBE319F0CF188EA00A65156 /* SymbolistRuntimeDocument.m in Sources */,
+				9F09C60A0CF277910010B6A1 /* SymbolistToolbarItem.m in Sources */,
+				9FCF8D5C0D2B22D700A327EC /* SymbolistInfoView.m in Sources */,
+				9FCF8D610D2B230500A327EC /* SymbolistRuntimeEntry.m in Sources */,
+				9F59BD8C0D2CF21800D22881 /* SymbolistTypeViewController.m in Sources */,
+				9F59BD910D2CF27F00D22881 /* SymbolistRuntimeLister.m in Sources */,
+				CDDB023E0D5014FB00A5378D /* SymbolistBinaryError.m in Sources */,
+				9FA8B1180D6E553600892635 /* SymbolistBinaryEntry+Demangle.mm in Sources */,
+				9FFDB73B0D6EFD1000FBED07 /* PSStringSearch.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9F17BD520FF2FE3100767BB4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9F17BD760FF2FF6C00767BB4 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		089C165FFE840EACC02AAC07 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				089C1660FE840EACC02AAC07 /* English */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		2A37F4B4FDCFA73011CA2CEA /* SymbolistBinaryDocument.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2A37F4B5FDCFA73011CA2CEA /* English */,
+			);
+			name = SymbolistBinaryDocument.nib;
+			sourceTree = "<group>";
+		};
+		2A37F4B6FDCFA73011CA2CEA /* MainMenu.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2A37F4B7FDCFA73011CA2CEA /* English */,
+			);
+			name = MainMenu.nib;
+			sourceTree = "<group>";
+		};
+		2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2A37F4BAFDCFA73011CA2CEA /* English */,
+			);
+			name = Credits.rtf;
+			sourceTree = "<group>";
+		};
+		9FBE324B0CF18E6100A65156 /* SymbolistRuntimeDocument.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9FBE324C0CF18E6100A65156 /* English */,
+			);
+			name = SymbolistRuntimeDocument.nib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		9F17BD570FF2FE3100767BB4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = SymbolistHelper;
+			};
+			name = Debug;
+		};
+		9F17BD580FF2FE3100767BB4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = SymbolistHelper;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		C05733C808A9546B00998B17 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_NAME = Symbolist;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		C05733C908A9546B00998B17 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_WARN_MISSING_PARENTHESES = YES;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_NAME = Symbolist;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		C05733CC08A9546B00998B17 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_VERSION = "";
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		C05733CD08A9546B00998B17 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_VERSION = "";
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				PREBINDING = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		9F17BD650FF2FE7000767BB4 /* Build configuration list for PBXNativeTarget "SymbolistHelper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9F17BD570FF2FE3100767BB4 /* Debug */,
+				9F17BD580FF2FE3100767BB4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C05733C708A9546B00998B17 /* Build configuration list for PBXNativeTarget "Symbolist" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C05733C808A9546B00998B17 /* Debug */,
+				C05733C908A9546B00998B17 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C05733CB08A9546B00998B17 /* Build configuration list for PBXProject "Symbolist" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C05733CC08A9546B00998B17 /* Debug */,
+				C05733CD08A9546B00998B17 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 2A37F4A9FDCFA73011CA2CEA /* Project object */;
+}

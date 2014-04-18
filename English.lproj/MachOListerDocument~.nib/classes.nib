@@ -1,0 +1,25 @@
+{
+    IBClasses = (
+        {
+            CLASS = DocumentController; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSDocumentController; 
+        }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {changeSearchString = id; }; 
+            CLASS = MachOListerDocument; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                "_table" = NSTableView; 
+                archPopup = NSPopUpButton; 
+                itemCountField = NSTextField; 
+                searchField = NSSearchField; 
+            }; 
+            SUPERCLASS = NSDocument; 
+        }, 
+        {CLASS = NSSegmentedControl; LANGUAGE = ObjC; SUPERCLASS = NSControl; }, 
+        {CLASS = SymbolTableEntry; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
+    ); 
+    IBVersion = 1; 
+}
