@@ -12,7 +12,7 @@
 #import "SymbolistBinaryLister.h"
 #import "SymbolistBinaryError.h"
 
-@interface SymbolistBinaryDocument : NSDocument
+@interface SymbolistBinaryDocument : NSDocument <NSToolbarDelegate>
 {
 	IBOutlet NSTableView *_table;
 	IBOutlet NSPopUpButton *archPopup;
@@ -36,11 +36,17 @@
 
 - (NSArray *)architectures;
 
-- (void)setupToolbar;
 - (void)filterSearchResults;
 
 - (IBAction)changeSearchString:(id)sender;
 
 - (IBAction)focusSearch:(id)sender;
+
+@end
+
+
+@interface SymbolistBinaryDocument (NSToolbarDelegate)
+
+- (void)setupToolbar;
 
 @end

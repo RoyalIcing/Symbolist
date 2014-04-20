@@ -13,19 +13,6 @@
 
 
 @implementation SymbolistRuntimeLister
-
-struct structTypedef {
-	CFStringRef name;
-	size_t pointerCount;
-};
-
-//inline struct structTypedef StructTypedefMake(const char *name, size_t pointerCount)
-//{
-//	struct structTypedef s;
-//	s.name = CFSTR(name);
-//	s.pointerCount = pointerCount;
-//	return s;
-//}
 	
 NSString *StringFromObjCTypeGetRange(const char *type, unsigned int *outType, BOOL *hasName, NSRange *outNameRange, BOOL *outIsPointer);
 

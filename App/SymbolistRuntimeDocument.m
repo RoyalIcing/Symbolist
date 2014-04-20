@@ -267,8 +267,6 @@
 
 - (BOOL)setSearchStringWithoutRecordingHistory:(NSString *)searchString
 {
-	id object = NULL;
-	
 	if (!searchString)
 		[self clear];
 	else if ([_searchString isEqualToString:searchString]) 
@@ -327,23 +325,24 @@
 		
 		[[_textView window] makeFirstResponder:_textView];
 		
+		unsigned int searchMode = [self searchMode];
 		id searchObject = [_lister searchObject];
 		NSString *objectString;
 		NSString *typeString;
-		if ([self searchMode] == SymbolistRuntimeModeClass) {
+		if (searchMode == SymbolistRuntimeModeClass) {
 			typeString = NSLocalizedString(@"Class", @"Title for Objective-C Class type");
 			objectString = NSStringFromClass(searchObject);
 		}
-		else {
+		else if (searchMode == SymbolistRuntimeModeProtocol) {
 			typeString = NSLocalizedString(@"Protocol", @"Title for Objective-C Protocol type");
-			//objectString = [NSString stringWithUTF8String:(const char *)protocol_getName(searchObject)];
-			objectString = [NSString stringWithUTF8String:[(Protocol *)searchObject name]];
+			objectString = NSStringFromProtocol((Protocol *)searchObject);
 		}
 		
 		[self setSearchStringWithoutRecordingHistory:objectString];
 		[_searchField setStringValue:objectString];
 		
 		[[self windowForSheet] setTitle:[NSString stringWithFormat:@"%@ %@", objectString, typeString]];
+		
 		return YES;
 	}
 	else {
@@ -585,7 +584,7 @@
 }
 
 - (void)filterSearchCompletes:(NSString *)filterString
-{NSLog(@"%s", _cmd);
+{NSLog(@"%@", NSStringFromSelector(_cmd));
 	if (!_filteredClassNames)
 		_filteredClassNames = [NSMutableArray new];
 	else
@@ -624,6 +623,8 @@
 	}
 	else
 		[_filteredClassNames addObjectsFromArray:names];
+	
+	[_filteredClassNames sortUsingSelector:@selector(compare:)];
 	
 	[_searchField reloadData];
 }
@@ -738,7 +739,7 @@
 //	}
 }
 
-- (BOOL)textView:(NSTextView *)aTextView clickedOnLink:(id)link atIndex:(unsigned)charIndex
+- (BOOL)textView:(NSTextView *)aTextView clickedOnLink:(id)link atIndex:(NSUInteger)charIndex
 {
 	if ([link isKindOfClass:[SymbolistRuntimeEntry class]]) {
 		
@@ -773,7 +774,7 @@
 	if (back) {
 		unsigned int count = [_historyBack count];
 		NSRange range = NSMakeRange(count - 1 - index, index);
-		NSAssert1(range.location < count, @"-%s; Index passed is greater than back history length.", _cmd);
+		NSAssert1(range.location < count, @"-%@; Index passed is greater than back history length.", NSStringFromSelector(_cmd));
 		
 		[_historyForward insertObject:currentEntry atIndex:0];
 		newEntry = [[_historyBack objectAtIndex:range.location] retain];
@@ -788,7 +789,7 @@
 	}
 	else {
 		unsigned int count = [_historyForward count];
-		NSAssert1(index < count, @"-%s; Index passed is greater than forward history length.", _cmd);
+		NSAssert1(index < count, @"-%@; Index passed is greater than forward history length.", NSStringFromSelector(_cmd));
 		NSRange range = NSMakeRange(0, index);
 		
 		[_historyBack addObject:currentEntry];

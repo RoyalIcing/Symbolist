@@ -129,9 +129,9 @@ NSString *PSGetDescriptionForByteCount(UInt64 bytes, PSBytesDescriptionType type
 		uint32_t i;
 		for (i = 0; i < _archCount; i++) {
 			NSLog(@"CLEAR ARCH %u", i);
-			NSLog(@"RELEASE %ul", [_infos[i].symbols count]);
+			NSLog(@"RELEASE %ul", (unsigned long)[_infos[i].symbols count]);
 			[_infos[i].symbols release];
-			NSLog(@"RELEASE %ul: %@", [_infos[i].symbolsNames count], _infos[i].symbolsNames);
+			NSLog(@"RELEASE %ul: %@", (unsigned long)[_infos[i].symbolsNames count], _infos[i].symbolsNames);
 			[_infos[i].symbolsNames release];
 		}
 			

@@ -14,7 +14,7 @@
 #import "SymbolistInfoView.h"
 
 
-@interface SymbolistRuntimeDocument : NSDocument
+@interface SymbolistRuntimeDocument : NSDocument <SymbolistRuntimeListerDelegate, NSTextViewDelegate, NSToolbarDelegate, NSAnimationDelegate>
 {
 	SymbolistRuntimeLister *_lister;
 	NSString *_searchString;
@@ -64,7 +64,6 @@
 - (BOOL)updateSearch:(BOOL)addOldToHistory;
 - (BOOL)loadSearchResults;
 - (void)clear;
-- (void)addEntryToHistory;
 
 - (void)filterSearchCompletes:(NSString *)filter;
 

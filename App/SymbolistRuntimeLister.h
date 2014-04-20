@@ -38,7 +38,7 @@ enum {
 	NSRange _attributeRange;
 	NSMutableDictionary *_attributeBuffer;
 	
-	<SymbolistRuntimeListerDelegate> _delegate;
+	id<SymbolistRuntimeListerDelegate> _delegate;
 }
 
 + (NSArray *)classNames;
@@ -47,8 +47,8 @@ enum {
 + (NSArray *)protocolNames;
 + (Protocol *)protocolForName:(NSString *)name;
 
-- (void)setDelegate:(<SymbolistRuntimeListerDelegate>)anObject;
-- (<SymbolistRuntimeListerDelegate>)delegate;
+- (void)setDelegate:(id<SymbolistRuntimeListerDelegate>)anObject;
+- (id<SymbolistRuntimeListerDelegate>)delegate;
 
 - (void)setSearchEntry:(SymbolistRuntimeEntry *)entry;
 - (SymbolistRuntimeEntry *)searchEntry;
