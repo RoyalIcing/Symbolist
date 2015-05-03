@@ -15,7 +15,7 @@
 #include <pthread.h>
 #include <mach-o/arch.h>
 
-#import "PSStringSearch.h"
+//#import "PSStringSearch.h"
 
 typedef struct {
 	CFAbsoluteTime executeTime;
@@ -86,11 +86,11 @@ time = tempTime; \
 //			average.readTime += timings[i].readTime / (CFAbsoluteTime)count;
 //			average.stringTime += timings[i].stringTime / (CFAbsoluteTime)count;
 //		}
-//		NSLog(@"popen: %f; read: %f; string: %f", average.executeTime, average.readTime, average.stringTime);
+//		DebugLog(@"popen: %f; read: %f; string: %f", average.executeTime, average.readTime, average.stringTime);
 
 //		struct rlimit procLimit;
 //		getrlimit(RLIMIT_NPROC, &procLimit);
-//		NSLog(@"%d %d", procLimit.rlim_cur, procLimit.rlim_max);
+//		DebugLog(@"%d %d", procLimit.rlim_cur, procLimit.rlim_max);
 //		
 //		pid_t newPid = 0;
 //		for (i = 0; i < count; i++) {
@@ -98,7 +98,7 @@ time = tempTime; \
 //			
 //			int taskPipes[2];
 //			if (pipe(taskPipes) == -1) {
-//				NSLog(@"Couldn't create pipe.");
+//				DebugLog(@"Couldn't create pipe.");
 //				break;
 //			}
 //			
@@ -114,7 +114,7 @@ time = tempTime; \
 //				_exit(EXIT_FAILURE);
 //			}
 //			else if (newPid == -1) {
-//				NSLog(@"fork() failed for %d. errno:%d", i, errno);
+//				DebugLog(@"fork() failed for %d. errno:%d", i, errno);
 //				// EAGAIN
 //				break;
 //			}
@@ -123,11 +123,11 @@ time = tempTime; \
 //			close(taskPipes[1]);
 //			taskOutput = dup(taskPipes[0]);
 //			//close(taskPipes[0]);
-//			//NSLog(@"%d pid:%d", taskPipes[0], newPid);
+//			//DebugLog(@"%d pid:%d", taskPipes[0], newPid);
 //			
 //			int status;
 //			if (waitpid(newPid, &status, WNOHANG) == -1) {
-//				NSLog(@"waitpid() failed");
+//				DebugLog(@"waitpid() failed");
 //				break;
 //			}
 //			//kill(newPid, SIGKILL);
@@ -157,7 +157,7 @@ time = tempTime; \
 //			average.readTime += timings[i].readTime / (CFAbsoluteTime)count;
 //			average.stringTime += timings[i].stringTime / (CFAbsoluteTime)count;
 //		}
-//		NSLog(@"manual: %f; read: %f; string: %f", average.executeTime, average.readTime, average.stringTime);
+//		DebugLog(@"manual: %f; read: %f; string: %f", average.executeTime, average.readTime, average.stringTime);
 //		
 //		
 //		for (i = 0; i < count; i++) {
@@ -194,18 +194,9 @@ time = tempTime; \
 //			average.readTime += timings[i].readTime / (CFAbsoluteTime)count;
 //			average.stringTime += timings[i].stringTime / (CFAbsoluteTime)count;
 //		}
-//		NSLog(@"NSTask: %f; read: %f; string: %f", average.executeTime, average.readTime, average.stringTime);
+//		DebugLog(@"NSTask: %f; read: %f; string: %f", average.executeTime, average.readTime, average.stringTime);
     }
     return self;
-}
-
-- (void)close
-{
-	if (symbolLister) [symbolLister release];
-	if (_symbols) [_symbols release];
-	if (_architectures) [_architectures release];
-	
-	[super close];
 }
 
 - (NSString *)windowNibName
@@ -226,12 +217,12 @@ time = tempTime; \
 
 - (BOOL)readFromURL:(NSURL *)absoluteURL ofType:(NSString *)typeName error:(NSError **)outError
 {
-	NSLog(@"%@", typeName);
+	DebugLog(@"%@", typeName);
     symbolLister = [[SymbolistBinaryLister alloc] initWithPath:[absoluteURL path] error:outError];
 	if (!symbolLister)
 		return NO;
 	
-	[symbolLister execute];
+	[symbolLister process];
 	[self setSelectedArch:0];
     
     return YES;
@@ -283,17 +274,14 @@ time = tempTime; \
 			else
 				name = [NSString stringWithFormat:@"CPU type:%u subtype:%u", cpuType, cpuSubtype];
 			
-			[dictionary setObject:name forKey:@"name"];
+			dictionary[@"name"] = name;
 			
-			[dictionary setObject:[NSString stringWithFormat:@"%s - %s", archInfo->name, archInfo->description]	forKey:@"description"];
+			dictionary[@"description"] = [NSString stringWithFormat:@"%s - %s", archInfo->name, archInfo->description];
 			
-			NSDictionary *immutCopy = [dictionary copy];
-			[architectures addObject:immutCopy];
-			[immutCopy release];
+			[architectures addObject:[dictionary copy]];
 		}
 		
 		_architectures = [architectures copy];
-		[architectures release];
 	}
 	
 	return _architectures;
@@ -306,7 +294,6 @@ time = tempTime; \
 	selectedArch = arch;
 	
 	if (_symbols) {
-		[_symbols release];
 		_symbols = nil;
 		[self symbols];
 		[self filterSearchResults];
@@ -322,7 +309,7 @@ time = tempTime; \
 		width = [@"0000000000000000" sizeWithAttributes:attributes].width;
 	else
 		width = [@"00000000" sizeWithAttributes:attributes].width;
-	NSLog(@"%f", width);
+	DebugLog(@"%f", width);
 	[column setWidth:width + 4.0];
 	[[[_table enclosingScrollView] contentView] setFrameSize:NSZeroSize];
 	[[_table enclosingScrollView] tile];
@@ -340,12 +327,12 @@ time = tempTime; \
 
 - (void)copy:(id)sender
 {
-	SymbolistBinaryEntry *entry = [[symbolsController selectedObjects] objectAtIndex:0];
+	SymbolistBinaryEntry *entry = [symbolsController selectedObjects][0];
 	if (entry == nil)
 		return;
 	
 	NSPasteboard *pboard = [NSPasteboard generalPasteboard];
-	NSArray *types = [NSArray arrayWithObject:NSStringPboardType];
+	NSArray *types = @[NSStringPboardType];
 	[pboard declareTypes:types owner:nil];
 	[pboard setString:[entry name] forType:NSStringPboardType];
 }
@@ -353,12 +340,12 @@ time = tempTime; \
 - (void)performFindPanelAction:(id)sender
 {
 	if ([sender respondsToSelector:@selector(tag)] && [sender tag] == NSFindPanelActionSetFindString) {
-		SymbolistBinaryEntry *entry = [[symbolsController selectedObjects] objectAtIndex:0];
+		SymbolistBinaryEntry *entry = [symbolsController selectedObjects][0];
 		if (entry == nil)
 			return;
 		
 		NSPasteboard *pboard = [NSPasteboard pasteboardWithName:NSFindPboard];
-		NSArray *types = [NSArray arrayWithObject:NSStringPboardType];
+		NSArray *types = @[NSStringPboardType];
 		[pboard declareTypes:types owner:nil];
 		[pboard setString:[entry name] forType:NSStringPboardType];
 	}
@@ -367,7 +354,6 @@ time = tempTime; \
 - (void)filterSearchResults
 {
 	[self willChangeValueForKey:@"symbols"];
-	[_symbols release];
 	_symbols = nil;
 	
 	if (_searchString && ![_searchString isEqualToString:@""]) {
@@ -387,6 +373,25 @@ time = tempTime; \
 		//		if ((negate = ([string characterAtIndex:0] == '!')))
 		//			[string deleteCharactersInRange:NSMakeRange(0, 1)];
 		
+#if 1
+		
+		CFAbsoluteTime t = CFAbsoluteTimeGetCurrent();
+	
+		NSArray *symbols = [symbolLister symbolsForArchAtIndex:selectedArch];
+		NSIndexSet *indexes = [symbols indexesOfObjectsWithOptions:NSEnumerationConcurrent passingTest: ^BOOL (id obj, NSUInteger idx, BOOL *stop) {
+			SymbolistBinaryEntry *entry = obj;
+			NSString *stringToSearch = (entry.name);
+			NSRange foundRange = [stringToSearch rangeOfString:_searchString options:NSCaseInsensitiveSearch];
+			
+			return foundRange.location != NSNotFound;
+		}];
+		
+		t = CFAbsoluteTimeGetCurrent() - t;
+		DebugLog(@"took %fs to filter", t);
+		
+		_symbols = [[symbols objectsAtIndexes:indexes] mutableCopy];
+		
+#else
 		PSStringSearchRef stringSearch = PSStringSearchCreate(_searchString);
 		
 		_symbols = [[NSMutableArray alloc] init];
@@ -399,6 +404,7 @@ time = tempTime; \
 		}
 		
 		PSStringSearchFree(stringSearch);
+#endif
 		
 		/*
 		 unsigned long match = 0;
@@ -475,12 +481,12 @@ time = tempTime; \
 
 - (NSArray *)toolbarAllowedItemIdentifiers:(NSToolbar *)toolbar
 {
-	return [NSArray arrayWithObjects:NSToolbarSeparatorItemIdentifier, NSToolbarSpaceItemIdentifier, NSToolbarFlexibleSpaceItemIdentifier, NSToolbarCustomizeToolbarItemIdentifier, @"ArchPopup", @"SearchField", @"ItemCount", nil];
+	return @[NSToolbarSeparatorItemIdentifier, NSToolbarSpaceItemIdentifier, NSToolbarFlexibleSpaceItemIdentifier, NSToolbarCustomizeToolbarItemIdentifier, @"ArchPopup", @"SearchField", @"ItemCount"];
 }
 
 - (NSArray *)toolbarDefaultItemIdentifiers:(NSToolbar *)toolbar
 {
-	return [NSArray arrayWithObjects:@"ArchPopup", NSToolbarFlexibleSpaceItemIdentifier, @"ItemCount", @"SearchField", nil];
+	return @[@"ArchPopup", NSToolbarFlexibleSpaceItemIdentifier, @"ItemCount", @"SearchField"];
 }
 
 - (NSToolbarItem *)toolbar:(NSToolbar *)toolbar itemForItemIdentifier:(NSString *)itemIdentifier willBeInsertedIntoToolbar:(BOOL)flag;
@@ -525,7 +531,7 @@ time = tempTime; \
 		[item setVisibilityPriority:NSToolbarItemVisibilityPriorityLow];
 	}
 	
-	return [item autorelease];
+	return item;
 }
 
 - (void)setupToolbar
@@ -539,7 +545,7 @@ time = tempTime; \
 	[toolbar setShowsBaselineSeparator:NO];
 	NSWindow *window = [self windowForSheet];
 	[window setShowsToolbarButton:NO];
-	[window setToolbar:[toolbar autorelease]];
+	[window setToolbar:toolbar];
 }
 
 @end

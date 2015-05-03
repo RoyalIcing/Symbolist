@@ -18,12 +18,12 @@
 	return @"Runtime";
 }
 
-- (int)runModalOpenPanel:(NSOpenPanel *)openPanel forTypes:(NSArray *)extensions
+- (NSInteger)runModalOpenPanel:(NSOpenPanel *)openPanel forTypes:(NSArray *)extensions
 {
 	[openPanel setCanChooseDirectories:YES];
 	[openPanel setTreatsFilePackagesAsDirectories:YES];
 	
-	NSLog(@"%@", extensions);
+	DebugLog(@"%@", extensions);
 	
 	return [super runModalOpenPanel:openPanel forTypes:extensions];
 }

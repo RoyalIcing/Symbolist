@@ -9,26 +9,27 @@
 #import "SymbolistRuntimeEntry.h"
 
 
+@interface SymbolistRuntimeEntry ()
+
+@property (readwrite, copy, nonatomic) NSString *name;
+
+@end
+
 @implementation SymbolistRuntimeEntry
 
 + (id)entryWithName:(NSString *)name mode:(unsigned int)mode
 {
-	return [[[self alloc] initWithName:name mode:mode] autorelease];
+	return [[self alloc] initWithName:name mode:mode];
 }
 
 - (id)initWithName:(NSString *)name mode:(unsigned int)mode
 {
 	self = [super init];
 	if (self) {
-		_name = [name copy];
+		(self.name) = name;
 		_mode = mode;
 	}
 	return self;
-}
-
-- (NSString *)name
-{
-	return [[_name retain] autorelease];
 }
 
 - (unsigned int)mode
@@ -38,7 +39,7 @@
 
 - (NSString *)description
 {
-	return [NSString stringWithFormat:@"%@ name:\"%@\" mode:%u", [super description], [self name], [self mode]];
+	return [NSString stringWithFormat:@"%@ name:\"%@\" mode:%u", [super description], (self.name), [self mode]];
 }
 
 @end

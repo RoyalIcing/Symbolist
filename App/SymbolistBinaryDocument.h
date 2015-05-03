@@ -29,7 +29,6 @@
 }
 
 - (NSArray *)symbols;
-- (NSArray *)symbolNames;
 
 - (void)setSelectedArch:(unsigned long)arch;
 - (unsigned long)selectedArch;

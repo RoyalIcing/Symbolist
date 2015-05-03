@@ -22,65 +22,59 @@ static NSMutableArray *_classNames = nil;
 + (NSArray *)classNames
 {
 	if (!_namesToClassesTable) {
-		//NSLog(@"FRAMEWORKS %@", [NSBundle allFrameworks]);
+		//DebugLog(@"FRAMEWORKS %@", [NSBundle allFrameworks]);
 		
 		CFAbsoluteTime t = CFAbsoluteTimeGetCurrent();
 		
 		_namesToClassesTable = [NSMutableDictionary new];
 		_classNames = [NSMutableArray new];
 		
-		int classCount = objc_getClassList(NULL, 0);
-		Class *classBuffer = NULL;
+		unsigned int classCount = 0;
+		Class *classBuffer = objc_copyClassList(&classCount);
 		
-		if (classCount > 0) {
-			classBuffer = malloc(sizeof(Class) * classCount);
-			objc_getClassList(classBuffer, classCount);
-			
-			// Find our app's path.
-			NSBundle *mainBundle = [NSBundle mainBundle];
-			const char *appPath = [[mainBundle bundlePath] fileSystemRepresentation];
-			size_t appPathLen = strlen(appPath);
-			CFAbsoluteTime t = CFAbsoluteTimeGetCurrent();
-			int i;
-			for (i = 0; i < classCount; i++) {
+		// Find our app's path.
+		NSBundle *mainBundle = [NSBundle mainBundle];
+		const char *appPath = [[mainBundle bundlePath] fileSystemRepresentation];
+		size_t appPathLen = strlen(appPath);
+		unsigned int i;
+		for (i = 0; i < classCount; i++) {
 #if 1
-				// Use the dynamic linker to find the executable path for the class.
-				Dl_info dlInfo;
-				if (dladdr(classBuffer[i], &dlInfo)) {
-					// If the class path matches (or is inside) our app path, then skip it.
-					if (strncmp(appPath, dlInfo.dli_fname, appPathLen) == 0)
-						continue;
-				}
-#endif
-				
-				Class class = classBuffer[i];
-				NSString *className = NSStringFromClass(class);
-				NSValue *classObject = [NSValue valueWithNonretainedObject:class];
-				
-				if (![_namesToClassesTable objectForKey:className]) {
-					// Add a strict case-sensitive entry.
-					[_namesToClassesTable setObject:classObject forKey:className];
-					
-					NSString *lowercaseName = [className lowercaseString];
-					if (![lowercaseName isEqualToString:className]) {
-						// Add a user friendly case-insensitive entry.
-						if ([_namesToClassesTable objectForKey:lowercaseName])
-							// Don't allow multiple protocols with the same case-insensitive name.
-							[_namesToClassesTable removeObjectForKey:lowercaseName];
-						else
-							[_namesToClassesTable setObject:classObject forKey:lowercaseName];
-					}
-					
-					[_classNames addObject:className];
-				}
+			// Use the dynamic linker to find the executable path for the class.
+			Dl_info dlInfo;
+			if (dladdr((__bridge const void *)(classBuffer[i]), &dlInfo)) {
+				// If the class path matches (or is inside) our app path, then skip it.
+				if (strncmp(appPath, dlInfo.dli_fname, appPathLen) == 0)
+					continue;
 			}
-			t = CFAbsoluteTimeGetCurrent() - t;
-//			NSLog(@"getting class names %fs", t);
+#endif
+			
+			Class class = classBuffer[i];
+			NSString *className = NSStringFromClass(class);
+			NSValue *classObject = [NSValue valueWithNonretainedObject:class];
+			
+			if (!_namesToClassesTable[className]) {
+				// Add a strict case-sensitive entry.
+				_namesToClassesTable[className] = classObject;
+				
+				NSString *lowercaseName = [className lowercaseString];
+				if (![lowercaseName isEqualToString:className]) {
+					// Add a user friendly case-insensitive entry.
+					if (_namesToClassesTable[lowercaseName])
+						// Don't allow multiple classes with the same case-insensitive name.
+						[_namesToClassesTable removeObjectForKey:lowercaseName];
+					else
+						_namesToClassesTable[lowercaseName] = classObject;
+				}
+				
+				[_classNames addObject:className];
+			}
 		}
+		
+		free(classBuffer);
 				
 		t = CFAbsoluteTimeGetCurrent() - t;
 		
-		NSLog(@"Loading classes (%d) took %fs.", classCount, t);
+		DebugLog(@"Loading classes (%d) took %fs.", classCount, t);
 	}
 	
 	return _classNames;
@@ -92,90 +86,89 @@ static NSMutableArray *_classNames = nil;
 	if (class)
 		return class;
 	
-	NSValue *classObject = [_namesToClassesTable objectForKey:name] ?: [_namesToClassesTable objectForKey:[name lowercaseString]];
+	NSValue *classObject = _namesToClassesTable[name] ?: _namesToClassesTable[[name lowercaseString]];
 	return [classObject nonretainedObjectValue];
 }
 
 CFComparisonResult SymbolistRuntimeDocument_CompareProtocol(Protocol *protocol1, Protocol *protocol2, void *context);
 
 static NSMutableDictionary *_namesToProtocolTable = nil;
-static NSMutableArray *_protocolNames;
+static NSMutableArray *_protocolNames = nil;
 
-+ (NSDictionary *)protocolNames
++ (NSArray *)protocolNames
 {
 	if (!_namesToProtocolTable) {
 		_namesToProtocolTable = [NSMutableDictionary new];
 		_protocolNames = [NSMutableArray new];
 		
-		long classCount = objc_getClassList(NULL, 0);
-		Class *classBuffer = NULL;
+		unsigned int classCount = 0;
+		Class *classBuffer = objc_copyClassList(&classCount);
 		
-		if (classCount > 0) {
-			classBuffer = malloc(sizeof(Class) * classCount);
-			objc_getClassList(classBuffer, classCount);
+		long i;
+		for (i = 0; i < classCount; i++) {
+			Class class = classBuffer[i];
+			unsigned int protocolCount;
+			Protocol * __unsafe_unretained *protocolArray = class_copyProtocolList(class, &protocolCount);
 			
-			long i;
-			for (i = 0; i < classCount; i++) {
-				Class class = classBuffer[i];
-				unsigned int protocolCount;
-				Protocol **protocolArray = class_copyProtocolList(class, &protocolCount);
+			for (unsigned int i = 0; i < protocolCount; i++) {
+				Protocol *protocol = protocolArray[i];
+				NSString *protocolName = @(protocol_getName(protocol));
 				
-				for (unsigned int i = 0; i < protocolCount; i++) {
-					Protocol *protocol = protocolArray[i];
-					NSString *protocolName = [NSString stringWithUTF8String:protocol_getName(protocol)];
+				if (!_namesToProtocolTable[protocolName]) {
+					// Add a strict case-sensitive entry.
+					_namesToProtocolTable[protocolName] = protocol;
+				}
+				
+				[_protocolNames addObject:protocolName];
+			}
+			
+			free(protocolArray);
+			
+#if 0
+			struct objc_protocol_list *protocolList = classBuffer[i]->protocols;
+			while (protocolList) {
+				long j;
+				Protocol *protocol;
+				NSString *protocolName;
+				//CFRange range = CFRangeMake(0, 0);
+				for (j = 0; j < protocolList->count; j++) {
+					protocol = protocolList->list[j];
+					protocolName = [NSString stringWithUTF8String:(const char *)[protocol name]];
 					
 					if (![_namesToProtocolTable objectForKey:protocolName]) {
 						// Add a strict case-sensitive entry.
 						[_namesToProtocolTable setObject:protocol forKey:protocolName];
-					}
-				}
-				
-				free(protocolArray);
-				
-				/*
-				struct objc_protocol_list *protocolList = classBuffer[i]->protocols;
-				while (protocolList) {
-					long j;
-					Protocol *protocol;
-					NSString *protocolName;
-					//CFRange range = CFRangeMake(0, 0);
-					for (j = 0; j < protocolList->count; j++) {
-						protocol = protocolList->list[j];
-						protocolName = [NSString stringWithUTF8String:(const char *)[protocol name]];
 						
-						if (![_namesToProtocolTable objectForKey:protocolName]) {
-							// Add a strict case-sensitive entry.
-							[_namesToProtocolTable setObject:protocol forKey:protocolName];
-							
-							NSString *lowercaseName = [protocolName lowercaseString];
-							if (![lowercaseName isEqualToString:protocolName]) {
-								// Add a user friendly case-insensitive entry.
-								if ([_namesToProtocolTable objectForKey:lowercaseName])
-									// Don't allow multiple protocols with the same case-insensitive name.
-									[_namesToProtocolTable removeObjectForKey:lowercaseName];
-								else
-									[_namesToProtocolTable setObject:protocol forKey:lowercaseName];
-							}
-							
-							[_protocolNames addObject:protocolName];
+						NSString *lowercaseName = [protocolName lowercaseString];
+						if (![lowercaseName isEqualToString:protocolName]) {
+							// Add a user friendly case-insensitive entry.
+							if ([_namesToProtocolTable objectForKey:lowercaseName])
+								// Don't allow multiple protocols with the same case-insensitive name.
+								[_namesToProtocolTable removeObjectForKey:lowercaseName];
+							else
+								[_namesToProtocolTable setObject:protocol forKey:lowercaseName];
 						}
+						
+						[_protocolNames addObject:protocolName];
 					}
-					
-					protocolList = protocolList->next;
 				}
-				*/
+				
+				protocolList = protocolList->next;
 			}
+#endif
 		}
+		
+		free(classBuffer);
 	}
 	
-	//return _protocolNames;
-	return _namesToProtocolTable;
+	return _protocolNames;
+	//return _namesToProtocolTable;
 }
 
 CFComparisonResult SymbolistRuntimeDocument_CompareProtocol(Protocol *protocol1, Protocol *protocol2, void *context)
 {
-	NSString *protocol1Name = [NSString stringWithUTF8String:protocol_getName(protocol1)];
-	NSString *protocol2Name = [NSString stringWithUTF8String:protocol_getName(protocol2)];
+	NSString *protocol1Name = @(protocol_getName(protocol1));
+	NSString *protocol2Name = @(protocol_getName(protocol2));
 	
 	return [protocol1Name compare:protocol2Name];
 	
@@ -194,7 +187,7 @@ CFComparisonResult SymbolistRuntimeDocument_CompareProtocol(Protocol *protocol1,
 {
 	[self protocolNames];
 	
-	return [_namesToProtocolTable objectForKey:name] ?: [_namesToProtocolTable objectForKey:[name lowercaseString]];
+	return _namesToProtocolTable[name] ?: _namesToProtocolTable[[name lowercaseString]];
 }
 
 - (id)init
@@ -206,8 +199,8 @@ CFComparisonResult SymbolistRuntimeDocument_CompareProtocol(Protocol *protocol1,
 	return self;
 }
 
-//	NSLog(@"%@", [NSBundle allFrameworks]);
-//	NSLog(@"%@", [NSBundle allBundles]);
+//	DebugLog(@"%@", [NSBundle allFrameworks]);
+//	DebugLog(@"%@", [NSBundle allBundles]);
 //	CFAbsoluteTime t = CFAbsoluteTimeGetCurrent();
 //	NSArray *libraryPaths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask | NSLocalDomainMask | NSSystemDomainMask, YES);
 //	NSFileManager *fileManager = [NSFileManager defaultManager];
@@ -227,7 +220,7 @@ CFComparisonResult SymbolistRuntimeDocument_CompareProtocol(Protocol *protocol1,
 //			[self frameworkBundlesInPath:subpath];
 //	}
 //	t = CFAbsoluteTimeGetCurrent() - t;
-//	NSLog(@"frameworks %fs", t);
+//	DebugLog(@"frameworks %fs", t);
 
 - (void)frameworkBundlesInPath:(NSString *)directory
 {
@@ -243,7 +236,7 @@ CFComparisonResult SymbolistRuntimeDocument_CompareProtocol(Protocol *protocol1,
 	//		CFBundleGetPackageInfoInDirectory(url, &type, NULL);
 	//		if (type == 'FMWK') {
 	//			//url = CFBundleCopyBundleURL(bundle);
-	//			NSLog(@"%@", url);
+	//			DebugLog(@"%@", url);
 	//			//CFRelease(url);
 	//		}
 	//	}
@@ -261,7 +254,7 @@ CFComparisonResult SymbolistRuntimeDocument_CompareProtocol(Protocol *protocol1,
 			CFBundleGetPackageInfo(bundle, &type, NULL);
 			//			if (type == 'FMWK') {
 			url = CFBundleCopyBundleURL(bundle);
-			NSLog(@"%@", url);
+			DebugLog(@"%@", url);
 			CFRelease(url);
 			//			}
 		}
@@ -284,27 +277,25 @@ CFComparisonResult SymbolistRuntimeDocument_CompareProtocol(Protocol *protocol1,
 - (void)setSearchEntry:(SymbolistRuntimeEntry *)entry
 {
 	if (_searchEntry != entry) {
-		[_searchEntry release];
-		_searchEntry = [entry retain];
+		_searchEntry = entry;
 	}
 }
 
 - (SymbolistRuntimeEntry *)searchEntry
 {
-	return [[_searchEntry retain] autorelease];;
+	return _searchEntry;;
 }
 
 - (void)setFilterString:(NSString *)string
 {
 	if (_filterString != string) {
-		[_filterString release];
 		_filterString = [string copy];
 	}
 }
 
 - (NSString *)filterString
 {
-	return [[_filterString retain] autorelease];
+	return _filterString;
 }
 
 - (id)searchObject
@@ -356,17 +347,18 @@ CFComparisonResult SymbolistRuntimeDocument_CompareProtocol(Protocol *protocol1,
 	if (!class)
 		return NO;
 	
-	NSLog(@"Class: %@; BUNDLE %@;", class, [NSBundle bundleForClass:class]);
+	DebugLog(@"Class: %@; BUNDLE %@;", class, [NSBundle bundleForClass:class]);
 	
 	[self loadMethodsForClass:class intoArray:_instanceMethods];
-	[self loadMethodsForClass:class->isa intoArray:_classMethods];
+	[self loadMethodsForClass:object_getClass(class) intoArray:_classMethods];
 	t = CFAbsoluteTimeGetCurrent() -  t;
-//	NSLog(@"loading methods (%u %u) took %fs", CFArrayGetCount(_instanceMethods), CFArrayGetCount(_classMethods), t);
+//	DebugLog(@"loading methods (%u %u) took %fs", CFArrayGetCount(_instanceMethods), CFArrayGetCount(_classMethods), t);
 	
 	unsigned int protocolCount = 0;
-	const Protocol **protocolList = class_copyProtocolList(class, &protocolCount);
+	Protocol * __unsafe_unretained *protocolList = class_copyProtocolList(class, &protocolCount);
 	if (protocolList && protocolCount > 0) {
-		_classProtocols = CFArrayCreate(kCFAllocatorDefault, (const void **)protocolList, protocolCount, NULL);
+		_classProtocols = CFBridgingRetain([[NSArray alloc] initWithObjects:protocolList count:protocolCount]);
+		//_classProtocols = CFArrayCreate(kCFAllocatorDefault, (const void **)protocolList, protocolCount, NULL);
 		free((void *)protocolList);
 		//[NSData dataWithBytesNoCopy:protocolList length:(sizeof(unsigned int) * protocolCount) freeWhenDone:YES];
 		
@@ -487,24 +479,24 @@ ApplyAttributes(newRange);
 	else if ([[self searchEntry] mode] == SymbolistRuntimeModeClass) {
 		AddAttributedString(@"@interface");
 		ApplyAttributes(_attributeRange);
-		[_attributeBuffer setObject:[userPrefs objectForKey:@"directiveColor"] forKey:NSForegroundColorAttributeName];
+		_attributeBuffer[NSForegroundColorAttributeName] = userPrefs[@"directiveColor"];
 		
 		[string appendString:@" "];
 		
 		Class class = _searchObject;
 		
 		AddAttributedString(NSStringFromClass(class));
-		[_attributeBuffer setObject:[userPrefs objectForKey:@"typeColor"] forKey:NSForegroundColorAttributeName];
+		_attributeBuffer[NSForegroundColorAttributeName] = userPrefs[@"typeColor"];
 		
 		// Add inherited superclass, if it exists.
 		Class superclass = class_getSuperclass(class);
 		if (superclass != NULL) {
 			[string appendString:@" : "];
 			AddAttributedString(NSStringFromClass(superclass));
-			[_attributeBuffer setObject:[userPrefs objectForKey:@"typeColor"] forKey:NSForegroundColorAttributeName];
+			_attributeBuffer[NSForegroundColorAttributeName] = userPrefs[@"typeColor"];
 			
 			SymbolistRuntimeEntry *entry = [SymbolistRuntimeEntry entryWithName:substring mode:SymbolistRuntimeModeClass];
-			[_attributeBuffer setObject:entry forKey:NSLinkAttributeName];
+			_attributeBuffer[NSLinkAttributeName] = entry;
 		}
 		
 		CFIndex count = _classProtocols ? CFArrayGetCount(_classProtocols) : 0;
@@ -514,11 +506,11 @@ ApplyAttributes(newRange);
 			CFIndex i;
 			for (i = 0; i < count; i++) {
 				Protocol *protocol = (Protocol *)CFArrayGetValueAtIndex(_classProtocols, i);
-				AddAttributedString([NSString stringWithUTF8String:protocol_getName(protocol)]);
-				[_attributeBuffer setObject:[userPrefs objectForKey:@"typeColor"] forKey:NSForegroundColorAttributeName];
+				AddAttributedString(@(protocol_getName(protocol)));
+				_attributeBuffer[NSForegroundColorAttributeName] = userPrefs[@"typeColor"];
 				
 				SymbolistRuntimeEntry *entry = [SymbolistRuntimeEntry entryWithName:substring mode:SymbolistRuntimeModeProtocol];
-				[_attributeBuffer setObject:entry forKey:NSLinkAttributeName];
+				_attributeBuffer[NSLinkAttributeName] = entry;
 				
 				if (count > 1 && i != count - 1)
 					[string appendString:@", "];
@@ -548,7 +540,7 @@ ApplyAttributes(newRange);
 					NSRange range;
 					range.length = nameRange.location;
 					range.location = [string length] - [substring length];
-					[_attributeBuffer setObject:[userPrefs objectForKey:@"keywordsColor"] forKey:NSForegroundColorAttributeName];
+					_attributeBuffer[NSForegroundColorAttributeName] = userPrefs[@"keywordsColor"];
 					ApplyAttributes(range);
 				}
 				
@@ -557,28 +549,28 @@ ApplyAttributes(newRange);
 					mode = SymbolistRuntimeModeClass;
 					
 					SymbolistRuntimeEntry *entry = [SymbolistRuntimeEntry entryWithName:[substring substringWithRange:nameRange] mode:mode];
-					[_attributeBuffer setObject:entry forKey:NSLinkAttributeName];
+					_attributeBuffer[NSLinkAttributeName] = entry;
 				}
 				else if (type == SymbolistTypeStruct) {
 					NSValue *ivarValue = [NSValue valueWithPointer:ivar_getTypeEncoding(ivar)];
-					[_attributeBuffer setObject:ivarValue forKey:NSLinkAttributeName];
+					_attributeBuffer[NSLinkAttributeName] = ivarValue;
 				}
 				
-				[_attributeBuffer setObject:[userPrefs objectForKey:@"typeColor"] forKey:NSForegroundColorAttributeName];
+				_attributeBuffer[NSForegroundColorAttributeName] = userPrefs[@"typeColor"];
 				if (nameRangeMax < [substring length]) {
 					nameRange.location = nameRangeMax;
 					nameRange.length = [substring length] - nameRangeMax;
 					UpdateAttributesRange(nameRange.location, nameRange.length);
-					[_attributeBuffer setObject:[userPrefs objectForKey:@"operatorColor"] forKey:NSForegroundColorAttributeName];
+					_attributeBuffer[NSForegroundColorAttributeName] = userPrefs[@"operatorColor"];
 				}
 				if (!noSpace)
 					[string appendString:@" "];
 				
 				AddAttributedString(([NSString stringWithFormat:@"%s", ivar_getName(ivar)]));
-				[_attributeBuffer setObject:[userPrefs objectForKey:@"variableColor"] forKey:NSForegroundColorAttributeName];
+				_attributeBuffer[NSForegroundColorAttributeName] = userPrefs[@"variableColor"];
 				
 				AddAttributedString(@";");
-				[_attributeBuffer setObject:[userPrefs objectForKey:@"operatorColor"] forKey:NSForegroundColorAttributeName];
+				_attributeBuffer[NSForegroundColorAttributeName] = userPrefs[@"operatorColor"];
 				
 				[string appendString:@"\n"];
 			}
@@ -602,17 +594,17 @@ ApplyAttributes(newRange);
 			[string appendString:@"\n"];
 		}
 		t = CFAbsoluteTimeGetCurrent() -  t;
-//		NSLog(@"adding methods %fs", t);
+//		DebugLog(@"adding methods %fs", t);
 		
 		AddAttributedString(@"@end");
-		[_attributeBuffer setObject:[userPrefs objectForKey:@"directiveColor"] forKey:NSForegroundColorAttributeName];
+		_attributeBuffer[NSForegroundColorAttributeName] = userPrefs[@"directiveColor"];
 	}
 	else if ([[self searchEntry] mode] == SymbolistRuntimeModeProtocol) {
 		Protocol *protocol = _searchObject;
 		
 		AddAttributedString(@"@protocol");
 		ApplyAttributes(_attributeRange);
-		[_attributeBuffer setObject:[userPrefs objectForKey:@"directiveColor"] forKey:NSForegroundColorAttributeName];
+		_attributeBuffer[NSForegroundColorAttributeName] = userPrefs[@"directiveColor"];
 		
 		[string appendFormat:@" %s", protocol_getName(protocol)];
 		
@@ -650,7 +642,7 @@ ApplyAttributes(newRange);
 		} while (!classFlag);
 		
 		AddAttributedString(@"@end");
-		[_attributeBuffer setObject:[userPrefs objectForKey:@"directiveColor"] forKey:NSForegroundColorAttributeName];
+		_attributeBuffer[NSForegroundColorAttributeName] = userPrefs[@"directiveColor"];
 	}
 end:
 	// Apply the last attributes.
@@ -758,7 +750,7 @@ end:
 	
 	NSString *prefix = meta ? @"+" : @"-";
 	AddAttributedString(prefix);
-	[_attributeBuffer setObject:[userPrefs objectForKey:@"operatorColor"] forKey:NSForegroundColorAttributeName];
+	_attributeBuffer[NSForegroundColorAttributeName] = userPrefs[@"operatorColor"];
 	
 	[string appendString:@" ("];
 	
@@ -786,9 +778,8 @@ end:
 				[string appendString:@" "];
 			
 			AddAttributedString(selectorPart);
-			[_attributeBuffer setObject:[userPrefs objectForKey:@"mainColor"] forKey:NSForegroundColorAttributeName];
+			_attributeBuffer[NSForegroundColorAttributeName] = userPrefs[@"mainColor"];
 			
-			[selectorPart release];
 			
 			[string appendString:@"("];
 			
@@ -805,7 +796,7 @@ end:
 				AddAttributedString(([NSString stringWithFormat:@"arg%u", index - 1]));
 				selector = partEnd;
 			}
-			[_attributeBuffer setObject:[userPrefs objectForKey:@"argumentColor"] forKey:NSForegroundColorAttributeName];
+			_attributeBuffer[NSForegroundColorAttributeName] = userPrefs[@"argumentColor"];
 		}
 	}
 	else
@@ -814,13 +805,12 @@ end:
 		if (length != 0) {
 			selectorPart = [[NSString alloc] initWithBytes:selector length:length encoding:[NSString defaultCStringEncoding]];
 			AddAttributedString(selectorPart);
-			[_attributeBuffer setObject:[userPrefs objectForKey:@"mainColor"] forKey:NSForegroundColorAttributeName];
-			[selectorPart release];
+			_attributeBuffer[NSForegroundColorAttributeName] = userPrefs[@"mainColor"];
 		}
 	}
 	
 	AddAttributedString(@";");
-	[_attributeBuffer setObject:[userPrefs objectForKey:@"operatorColor"] forKey:NSForegroundColorAttributeName];
+	_attributeBuffer[NSForegroundColorAttributeName] = userPrefs[@"operatorColor"];
 	[string appendString:@"\n"];
 }
 
@@ -839,28 +829,28 @@ end:
 	if (nameRange.location > 0) {
 		nameRange.length = nameRange.location;
 		nameRange.location = [string length] - [substring length];
-		[_attributeBuffer setObject:[userPrefs objectForKey:@"keywordsColor"] forKey:NSForegroundColorAttributeName];
+		_attributeBuffer[NSForegroundColorAttributeName] = userPrefs[@"keywordsColor"];
 		ApplyAttributes(nameRange);
 	}
 	
-	[_attributeBuffer setObject:[userPrefs objectForKey:@"typeColor"] forKey:NSForegroundColorAttributeName];
+	_attributeBuffer[NSForegroundColorAttributeName] = userPrefs[@"typeColor"];
 	if (type == SymbolistTypeObject) {
 		unsigned int mode;
 		mode = SymbolistRuntimeModeClass;
 		
 		SymbolistRuntimeEntry *entry = [SymbolistRuntimeEntry entryWithName:[substring substringWithRange:nameRange] mode:mode];
-		[_attributeBuffer setObject:entry forKey:NSLinkAttributeName];
+		_attributeBuffer[NSLinkAttributeName] = entry;
 	}
 	else if (type == SymbolistTypeStruct) {
 		NSValue *ivarValue = [NSValue valueWithPointer:objcType];
-		[_attributeBuffer setObject:ivarValue forKey:NSLinkAttributeName];
+		_attributeBuffer[NSLinkAttributeName] = ivarValue;
 	}
 	
 	if (nameRangeMax < [substring length]) {
 		nameRange.location = nameRangeMax;
 		nameRange.length = [substring length] - nameRangeMax;
 		UpdateAttributesRange(nameRange.location, nameRange.length);
-		[_attributeBuffer setObject:[userPrefs objectForKey:@"operatorColor"] forKey:NSForegroundColorAttributeName];
+		_attributeBuffer[NSForegroundColorAttributeName] = userPrefs[@"operatorColor"];
 	}
 	//[_attributeBuffer setObject:typeValue forKey:NSLinkAttributeName];
 }
@@ -942,7 +932,7 @@ NSString *StringFromObjCTypeGetRange(const char *type, unsigned int *outType, BO
 				nameLength++;
 			}
 			
-			argString = [[[NSString alloc] initWithBytes:type-nameLength length:nameLength encoding:[NSString defaultCStringEncoding]] autorelease];
+			argString = [[NSString alloc] initWithBytes:(type - nameLength) length:nameLength encoding:[NSString defaultCStringEncoding]];
 			pointerCount++;
 			
 			flags.hasName = 1;
@@ -961,16 +951,16 @@ NSString *StringFromObjCTypeGetRange(const char *type, unsigned int *outType, BO
 		argString = @"SEL";
 	else if (type[0] == '[')
 #warning Unimplemented
-		argString = @"array";
+		argString = @"(array)";
 	else if (type[0] == '(')
 #warning Unimplemented
-		argString = @"union";
+		argString = @"(union)";
 	else if (type[0] == '{') { // Struct
 		const char *typeStart = ++type;
 		unsigned long nameLength = 0;
 		
 		for (; ; type++) {
-			//NSLog(@"char:%c %u %d", type[0], endCount, (endCount == 1));
+			//DebugLog(@"char:%c %u %d", type[0], endCount, (endCount == 1));
 			if (type[0] == '}')
 				break;
 			else {
@@ -981,7 +971,7 @@ NSString *StringFromObjCTypeGetRange(const char *type, unsigned int *outType, BO
 			}
 		}
 		
-//		NSLog(@"%s", type);
+//		DebugLog(@"%s", type);
 		
 		NSString *structName;
 		
@@ -1012,7 +1002,7 @@ NSString *StringFromObjCTypeGetRange(const char *type, unsigned int *outType, BO
 			//			}
 			//			else
 			
-			argString = [[structName retain] autorelease];
+			argString = structName;
 		}
 		
 		flags.hasName = 1;
@@ -1021,8 +1011,6 @@ NSString *StringFromObjCTypeGetRange(const char *type, unsigned int *outType, BO
 			outNameRange->location = 0;
 			outNameRange->length = [argString length];
 		}
-		
-		[structName release];
 	}
 	
 	if (flags.constFlag == 1)
@@ -1042,7 +1030,7 @@ NSString *StringFromObjCTypeGetRange(const char *type, unsigned int *outType, BO
 	if (outNameRange) {
 		outNameRange->location += [fullString length];
 //		if ([fullString length] > 0)
-//			NSLog(@"%u %u '%@'", outNameRange->location, [fullString length], fullString);
+//			DebugLog(@"%u %u '%@'", outNameRange->location, [fullString length], fullString);
 	}
 	
 	[fullString appendString:argString];

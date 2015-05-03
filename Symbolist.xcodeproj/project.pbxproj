@@ -27,8 +27,10 @@
 		9FE9E7260BF4A2010059DB9E /* SymbolistBinaryLister.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE9E7250BF4A2010059DB9E /* SymbolistBinaryLister.m */; };
 		9FE9E8A70BF4B8600059DB9E /* SymbolistBinaryEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE9E8A60BF4B8600059DB9E /* SymbolistBinaryEntry.m */; };
 		9FEF0FBD0BF406F300EED6C6 /* SymbolistAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEF0FBB0BF406F200EED6C6 /* SymbolistAppDelegate.m */; };
-		9FFDB7370D6EFCDC00FBED07 /* PSStringSearch.h in Resources */ = {isa = PBXBuildFile; fileRef = 9FFDB7360D6EFCDC00FBED07 /* PSStringSearch.h */; };
-		9FFDB73B0D6EFD1000FBED07 /* PSStringSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFDB73A0D6EFD1000FBED07 /* PSStringSearch.m */; };
+		B23966E41ACD378000C6A420 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B23966E31ACD378000C6A420 /* QuartzCore.framework */; };
+		B23966E61ACD378600C6A420 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B23966E51ACD378600C6A420 /* WebKit.framework */; };
+		B23966E81ACD378E00C6A420 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B23966E71ACD378E00C6A420 /* CloudKit.framework */; };
+		B2D14F1319387B50001A5889 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B2D14F1219387B50001A5889 /* Images.xcassets */; };
 		CDDB023E0D5014FB00A5378D /* SymbolistBinaryError.m in Sources */ = {isa = PBXBuildFile; fileRef = CDDB023D0D5014FB00A5378D /* SymbolistBinaryError.m */; };
 /* End PBXBuildFile section */
 
@@ -71,8 +73,11 @@
 		9FE9E8A60BF4B8600059DB9E /* SymbolistBinaryEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SymbolistBinaryEntry.m; sourceTree = "<group>"; };
 		9FEF0FBB0BF406F200EED6C6 /* SymbolistAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = SymbolistAppDelegate.m; sourceTree = "<group>"; };
 		9FEF0FBC0BF406F300EED6C6 /* SymbolistAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SymbolistAppDelegate.h; sourceTree = "<group>"; };
-		9FFDB7360D6EFCDC00FBED07 /* PSStringSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSStringSearch.h; sourceTree = "<group>"; };
-		9FFDB73A0D6EFD1000FBED07 /* PSStringSearch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSStringSearch.m; sourceTree = "<group>"; };
+		B20C80111934D671001539D0 /* Symbolist.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Symbolist.entitlements; sourceTree = "<group>"; };
+		B23966E31ACD378000C6A420 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		B23966E51ACD378600C6A420 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
+		B23966E71ACD378E00C6A420 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
+		B2D14F1219387B50001A5889 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Symbolist/Images.xcassets; sourceTree = "<group>"; };
 		CDDB023C0D5014FB00A5378D /* SymbolistBinaryError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolistBinaryError.h; sourceTree = "<group>"; };
 		CDDB023D0D5014FB00A5378D /* SymbolistBinaryError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SymbolistBinaryError.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -82,6 +87,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B23966E81ACD378E00C6A420 /* CloudKit.framework in Frameworks */,
+				B23966E61ACD378600C6A420 /* WebKit.framework in Frameworks */,
+				B23966E41ACD378000C6A420 /* QuartzCore.framework in Frameworks */,
 				8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -126,6 +134,7 @@
 		2A37F4AAFDCFA73011CA2CEA /* Symbolist */ = {
 			isa = PBXGroup;
 			children = (
+				B20C80111934D671001539D0 /* Symbolist.entitlements */,
 				9F17BD660FF2FE9A00767BB4 /* Core */,
 				2A37F4ABFDCFA73011CA2CEA /* App */,
 				9F17BD6D0FF2FF0400767BB4 /* Helper Tool */,
@@ -160,6 +169,7 @@
 		2A37F4B8FDCFA73011CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				B2D14F1219387B50001A5889 /* Images.xcassets */,
 				2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */,
 				2A37F4B6FDCFA73011CA2CEA /* MainMenu.nib */,
 				2A37F4B4FDCFA73011CA2CEA /* SymbolistBinaryDocument.nib */,
@@ -173,6 +183,9 @@
 		2A37F4C3FDCFA73011CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B23966E71ACD378E00C6A420 /* CloudKit.framework */,
+				B23966E51ACD378600C6A420 /* WebKit.framework */,
+				B23966E31ACD378000C6A420 /* QuartzCore.framework */,
 				1058C7A6FEA54F5311CA2CBB /* Linked Frameworks */,
 				1058C7A8FEA54F5311CA2CBB /* Other Frameworks */,
 			);
@@ -182,8 +195,6 @@
 		9F17BD660FF2FE9A00767BB4 /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				9FFDB7360D6EFCDC00FBED07 /* PSStringSearch.h */,
-				9FFDB73A0D6EFD1000FBED07 /* PSStringSearch.m */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -293,6 +304,16 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0510;
+				TargetAttributes = {
+					8D15AC270486D014006FF6A4 = {
+						DevelopmentTeam = 5278SPSAPR;
+						SystemCapabilities = {
+							com.apple.Sandbox = {
+								enabled = 1;
+							};
+						};
+					};
+				};
 			};
 			buildConfigurationList = C05733CB08A9546B00998B17 /* Build configuration list for PBXProject "Symbolist" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -318,10 +339,10 @@
 			files = (
 				8D15AC2C0486D014006FF6A4 /* Credits.rtf in Resources */,
 				8D15AC2D0486D014006FF6A4 /* MainMenu.nib in Resources */,
+				B2D14F1319387B50001A5889 /* Images.xcassets in Resources */,
 				8D15AC2E0486D014006FF6A4 /* SymbolistBinaryDocument.nib in Resources */,
 				8D15AC2F0486D014006FF6A4 /* InfoPlist.strings in Resources */,
 				9FBE324D0CF18E6100A65156 /* SymbolistRuntimeDocument.nib in Resources */,
-				9FFDB7370D6EFCDC00FBED07 /* PSStringSearch.h in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -346,7 +367,6 @@
 				9F59BD910D2CF27F00D22881 /* SymbolistRuntimeLister.m in Sources */,
 				CDDB023E0D5014FB00A5378D /* SymbolistBinaryError.m in Sources */,
 				9FA8B1180D6E553600892635 /* SymbolistBinaryEntry+Demangle.mm in Sources */,
-				9FFDB73B0D6EFD1000FBED07 /* PSStringSearch.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -453,12 +473,20 @@
 		C05733C808A9546B00998B17 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_ENTITLEMENTS = Symbolist.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREFIX_HEADER = Symbolist_Prefix.pch;
+				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_NAME = Symbolist;
@@ -470,9 +498,16 @@
 		C05733C908A9546B00998B17 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_ENTITLEMENTS = Symbolist.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
+				GCC_PREFIX_HEADER = Symbolist_Prefix.pch;
 				GCC_WARN_MISSING_PARENTHESES = YES;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
@@ -484,10 +519,11 @@
 		C05733CC08A9546B00998B17 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				GCC_VERSION = "";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
 				SDKROOT = macosx;
@@ -497,10 +533,11 @@
 		C05733CD08A9546B00998B17 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				GCC_VERSION = "";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PREBINDING = NO;
 				SDKROOT = macosx;
 			};

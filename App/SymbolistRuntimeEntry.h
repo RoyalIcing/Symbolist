@@ -24,7 +24,8 @@ enum {
 
 - (id)initWithName:(NSString *)name mode:(unsigned int)mode;
 
-- (NSString *)name;
+@property (readonly, copy, nonatomic) NSString *name;
+
 - (unsigned int)mode;
 
 @end

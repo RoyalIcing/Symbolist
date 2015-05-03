@@ -59,16 +59,13 @@
 
 - (void)dealloc
 {
-	if (_nameString) [_nameString release];
 	free(_name);
-	
-	[super dealloc];
 }
 
 - (NSString *)name
 {
 	if (_nameString)
-		return [[_nameString retain] autorelease];
+		return _nameString;
 	
 	const char *string = _name;
 	unsigned int length = strlen(_name);
@@ -92,7 +89,7 @@
 	// Not using 'free when done', as we can not rely on '_nameString' taking ownership, since this method may not be called.
 	_nameString = [[NSString alloc] initWithBytesNoCopy:(void *)string length:length encoding:NSUTF8StringEncoding freeWhenDone:NO];
 	
-	return [[_nameString retain] autorelease];
+	return _nameString;
 }
 
 - (NSString *)typeShortDescription
@@ -101,7 +98,7 @@
 		return @"-";
 	
 	uint8_t nType = _type & N_TYPE;
-	if (nType == N_UNDF)
+	if (N_UNDF == nType)
 		return @"Undefined";
 	else if (N_ABS == nType)
 		return @"Absolute";
@@ -112,7 +109,8 @@
 	else if (N_INDR == nType)
 		return @"Indirect";
 	else
-		return @"?";
+		return @(nType).stringValue;
+		//return @"?";
 }
 
 - (NSString *)typeDescription
@@ -121,7 +119,8 @@
 		return @"Debug";
 	
 	uint8_t nType = _type & N_TYPE;
-	if (nType == N_UNDF) {
+	
+	if (N_UNDF == nType) {
 		if ([self isExternal] && [self hasNonZeroValue])
 			return NSLocalizedStringFromTable(@"Common", @"SymbolistBinary", @"Common symbol type.");
 		else
@@ -138,12 +137,43 @@
 	else if (N_INDR == nType)
 		return @"Indirect";
 	else
-		return @"?";
+		return @(nType).stringValue;
+		//return @"?";
+}
+
+- (NSString *)value
+{
+	return nil;
+}
+
+- (BOOL)hasNonZeroValue
+{
+	return NO;
 }
 
 - (BOOL)isDebug
 {
 	return (_type & N_STAB) != 0;
+}
+
+- (BOOL)isObjCClass
+{
+	return _flags.isObjCClass;
+}
+
+- (BOOL)isExternal
+{
+	return (_type & N_EXT) != 0;
+}
+
+- (BOOL)isPrivate
+{
+	return (_type & N_PEXT) != 0;
+}
+
+- (BOOL)is64Bit
+{
+	return NO;
 }
 
 - (NSString *)externalDescription
@@ -154,16 +184,6 @@
 		return NSLocalizedStringFromTable(@"External", @"SymbolistBinary", @"External symbol type.");
 	else
 		return NSLocalizedStringFromTable(@"Local", @"SymbolistBinary", @"Local symbol type.");
-}
-
-- (BOOL)isExternal
-{
-	return (N_EXT & _type) != 0;
-}
-
-- (BOOL)isPrivate
-{
-	return (_type & N_PEXT) != 0;
 }
 
 @end
@@ -199,9 +219,9 @@
 		return nil;
 }
 
-- (BOOL)isObjCClass
+- (BOOL)is64Bit
 {
-	return _flags.isObjCClass;
+	return NO;
 }
 
 @end
@@ -232,14 +252,14 @@
 - (NSString *)value
 {
 	if (_value != 0)
-		return [NSString stringWithFormat:@"%016X", _value];
+		return [NSString stringWithFormat:@"%016llX", _value];
 	else
 		return nil;
 }
 
-- (BOOL)isObjCClass
+- (BOOL)is64Bit
 {
-	return _flags.isObjCClass;
+	return YES;
 }
 
 @end

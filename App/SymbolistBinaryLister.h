@@ -15,16 +15,17 @@
 #import "SymbolistBinaryEntry.h"
 
 
-typedef struct {
-	cpu_type_t cpuType;
-	cpu_subtype_t cpuSubtype;
-	NSArray *symbols;
-	NSArray *symbolsNames;
-} SymbolistBinaryListerMachOInfo;
+@interface SymbolistBinaryListerMachOInfo : NSObject
+
+@property (nonatomic) cpu_type_t cpuType;
+@property (nonatomic) cpu_subtype_t cpuSubtype;
+@property (copy, nonatomic) NSArray *symbols;
+
+@end
+
 
 @interface SymbolistBinaryLister : NSObject
 {
-	NSString *_path;
 	int _fd;
 	
 	struct {
@@ -33,16 +34,16 @@ typedef struct {
 	} _flags;
 	
 	uint32_t _archCount;
-	SymbolistBinaryListerMachOInfo *_infos;
 }
 
 - (id)initWithPath:(NSString *)path error:(NSError **)outError;
 
+@property (copy, nonatomic) NSString *path;
+
 - (BOOL)isValid;
 - (BOOL)isFat;
 
-- (void)execute;
-- (void)clear;
+- (void)process;
 
 - (uint32_t)numberOfArchitectures;
 
@@ -50,7 +51,6 @@ typedef struct {
 - (cpu_subtype_t)cpuSubtypeForArchAtIndex:(uint32_t)index;
 
 - (NSArray *)symbolsForArchAtIndex:(uint32_t)index;
-- (NSArray *)symbolNamesForArchAtIndex:(uint32_t)index;
 
 #pragma mark -
 
@@ -58,7 +58,7 @@ typedef struct {
 - (BOOL)checkIsMachOHeader:(off_t)offset;
 
 - (BOOL)processFatHeader:(off_t)offset;
-- (BOOL)processMachOHeader:(off_t)offset getInfo:(SymbolistBinaryListerMachOInfo *)outInfo;
+- (SymbolistBinaryListerMachOInfo *)processMachOHeader:(off_t)offset;
 
 - (ssize_t)readBytes:(void *)buffer length:(size_t)length offset:(off_t)offset;
 

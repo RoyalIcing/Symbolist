@@ -9,7 +9,7 @@
 #import "SymbolistRuntimeDocument.h"
 
 #import "SymbolistAppDelegate.h"
-#import "PSStringSearch.h"
+//#import "PSStringSearch.h"
 
 
 @implementation SymbolistRuntimeDocument
@@ -21,18 +21,18 @@
 		_lister = [[SymbolistRuntimeLister alloc] init];
 		[_lister setDelegate:self];
 		
-		_historyBack = [[NSMutableArray alloc] init];
-		_historyForward = [[NSMutableArray alloc] init];
+		_historyBack = [NSMutableArray new];
+		_historyForward = [NSMutableArray new];
 		
-		_userPrefs = [[NSMutableDictionary alloc] init];
-		[_userPrefs setObject:[NSColor textColor] forKey:@"mainColor"];
-		[_userPrefs setObject:[NSColor purpleColor] forKey:@"keywordsColor"];
-		[_userPrefs setObject:[NSColor purpleColor] forKey:@"directiveColor"];
-		[_userPrefs setObject:[NSColor colorWithCalibratedRed:0.0 green:0.25 blue:0.75 alpha:1.0] forKey:@"typeColor"];
-		[_userPrefs setObject:[NSColor colorWithCalibratedRed:0.675 green:0.0 blue:0.0 alpha:1.0] forKey:@"operatorColor"];
-		[_userPrefs setObject:[NSColor textColor] forKey:@"variableColor"];
-		[_userPrefs setObject:[NSColor colorWithCalibratedRed:0.75 green:0.25 blue:0.0 alpha:1.0] forKey:@"argumentColor"];
-		[_userPrefs setObject:[NSFont fontWithName:@"Monaco" size:10.0] forKey:@"font"];
+		_userPrefs = [NSMutableDictionary new];
+		_userPrefs[@"mainColor"] = [NSColor textColor];
+		_userPrefs[@"keywordsColor"] = [NSColor purpleColor];
+		_userPrefs[@"directiveColor"] = [NSColor purpleColor];
+		_userPrefs[@"typeColor"] = [NSColor colorWithCalibratedRed:0.0 green:0.25 blue:0.75 alpha:1.0];
+		_userPrefs[@"operatorColor"] = [NSColor colorWithCalibratedRed:0.675 green:0.0 blue:0.0 alpha:1.0];
+		_userPrefs[@"variableColor"] = [NSColor textColor];
+		_userPrefs[@"argumentColor"] = [NSColor colorWithCalibratedRed:0.75 green:0.25 blue:0.0 alpha:1.0];
+		_userPrefs[@"font"] = [NSFont fontWithName:@"Monaco" size:10.0];
 		
 		[self setSearchMode:SymbolistRuntimeModeClass];
 		
@@ -45,16 +45,7 @@
 
 - (void)dealloc
 {
-	[_lister release];
-	[_historyBack release];
-	[_historyForward release];
-	[_userPrefs release];
-	[_filterString release];
-	[_filteredClassNames release];
-	[_filteredProtocolNames release];
 	if (_structPointerCount) CFRelease(_structPointerCount);
-	
-	[super dealloc];
 }
 
 - (NSString *)windowNibName
@@ -62,10 +53,15 @@
     return @"SymbolistRuntimeDocument";
 }
 
+- (NSString *)displayName
+{
+	return NSLocalizedString(@"Cocoa Searcher", @"Display name for runtime document window title");
+}
+
 - (void)windowControllerDidLoadNib:(NSWindowController *)windowController
 {
 	[[_filterField cell] setPlaceholderString:NSLocalizedString(@"Filter", @"Placeholder string for filter field.")];
-	[[_searchField cell] setPlaceholderString:NSLocalizedString(@"Symbol", @"Placeholder string for filter field.")];
+	[[_searchField cell] setPlaceholderString:NSLocalizedString(@"Class or Protocol name", @"Placeholder string for class/protocol search field.")];
 	//[_searchField setCompletes:YES];
 		
 	[self setupToolbar];
@@ -85,16 +81,15 @@
 	[self focusSearch:nil];
 	
 	[_textView setDelegate:self];
-	[_textView setLinkTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
-									  [NSNumber numberWithInt:NSUnderlineStyleSingle], NSUnderlineStyleAttributeName,
-									  [NSCursor pointingHandCursor], NSCursorAttributeName, nil]];
+	[_textView setLinkTextAttributes:@{NSUnderlineStyleAttributeName: @(NSUnderlineStyleSingle),
+									  NSCursorAttributeName: [NSCursor pointingHandCursor]}];
 	//[_textView setFont:[_userPrefs objectForKey:@"font"]];
 	
 //	NSBundle *osaBundle = [NSBundle bundleWithPath:@"/System/Library/Frameworks/OSAKit.framework/"];
 //	NSLog (@"%@", [osaBundle principalClass]);
 	
-//	NSLog(@"%@", [NSBundle allFrameworks]);
-	NSLog(@"%@", [NSBundle allBundles]);
+//	DebugLog(@"%@", [NSBundle allFrameworks]);
+	DebugLog(@"%@", [NSBundle allBundles]);
 //	CFAbsoluteTime t = CFAbsoluteTimeGetCurrent();
 //	NSArray *libraryPaths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask | NSLocalDomainMask | NSSystemDomainMask, YES);
 //	NSFileManager *fileManager = [NSFileManager defaultManager];
@@ -114,7 +109,7 @@
 //			[self frameworkBundlesInPath:subpath];
 //	}
 //	t = CFAbsoluteTimeGetCurrent() - t;
-//	NSLog(@"frameworks %fs", t);
+//	DebugLog(@"frameworks %fs", t);
 }
 
 - (void)frameworkBundlesInPath:(NSString *)directory
@@ -131,7 +126,7 @@
 //		CFBundleGetPackageInfoInDirectory(url, &type, NULL);
 //		if (type == 'FMWK') {
 //			//url = CFBundleCopyBundleURL(bundle);
-//			NSLog(@"%@", url);
+//			DebugLog(@"%@", url);
 //			//CFRelease(url);
 //		}
 //	}
@@ -149,7 +144,7 @@
 			CFBundleGetPackageInfo(bundle, &type, NULL);
 //			if (type == 'FMWK') {
 				url = CFBundleCopyBundleURL(bundle);
-				NSLog(@"%@", url);
+				DebugLog(@"%@", url);
 				CFRelease(url);
 //			}
 		}
@@ -160,12 +155,12 @@
 
 - (NSArray *)toolbarAllowedItemIdentifiers:(NSToolbar *)toolbar
 {
-	return [NSArray arrayWithObjects:NSToolbarSeparatorItemIdentifier, NSToolbarSpaceItemIdentifier, NSToolbarFlexibleSpaceItemIdentifier, NSToolbarCustomizeToolbarItemIdentifier, @"TypeControl", @"SearchField", @"NavigationButtons", nil];
+	return @[NSToolbarSeparatorItemIdentifier, NSToolbarSpaceItemIdentifier, NSToolbarFlexibleSpaceItemIdentifier, NSToolbarCustomizeToolbarItemIdentifier, @"TypeControl", @"SearchField", @"NavigationButtons"];
 }
 
 - (NSArray *)toolbarDefaultItemIdentifiers:(NSToolbar *)toolbar
 {
-	return [NSArray arrayWithObjects:@"NavigationButtons", @"TypeControl", @"SearchField", nil];
+	return @[@"NavigationButtons", @"TypeControl", @"SearchField"];
 }
 
 - (NSToolbarItem *)toolbar:(NSToolbar *)toolbar itemForItemIdentifier:(NSString *)itemIdentifier willBeInsertedIntoToolbar:(BOOL)flag;
@@ -209,35 +204,31 @@
 		
 		NSImage *image = [[NSImage alloc] initWithSize:NSMakeSize(9.0, 9.0)];
 		[image lockFocus];
-		path = [[NSBezierPath alloc] init];
+		path = [NSBezierPath new];
 		[path moveToPoint:NSMakePoint(8.0, 0.0)];
 		[path lineToPoint:NSMakePoint(8.0, 9.0)];
 		[path lineToPoint:NSMakePoint(0.0, 4.5)];
 		[path closePath];
 		[fill setFill];
 		[path fill];
-		[path release];
 		[image unlockFocus];
 		
 		[_navigationControl setImage:image forSegment:0];
 		[_navigationControl setLabel:nil forSegment:0];
-		[image release];
 		
 		image = [[NSImage alloc] initWithSize:NSMakeSize(9.0, 9.0)];
 		[image lockFocus];
-		path = [[NSBezierPath alloc] init];
+		path = [NSBezierPath new];
 		[path moveToPoint:NSMakePoint(1.0, 0.0)];
 		[path lineToPoint:NSMakePoint(1.0, 9.0)];
 		[path lineToPoint:NSMakePoint(9.0, 4.5)];
 		[path closePath];
 		[fill setFill];
 		[path fill];
-		[path release];
 		[image unlockFocus];
 		
 		[_navigationControl setImage:image forSegment:1];
 		[_navigationControl setLabel:nil forSegment:1];
-		[image release];
 	}
 	else if ([itemIdentifier isEqualToString:NSToolbarSpaceItemIdentifier]) {
 		[item setMinSize:NSZeroSize];
@@ -248,12 +239,12 @@
 		[item setVisibilityPriority:NSToolbarItemVisibilityPriorityLow];
 	}
 	
-	return [item autorelease];
+	return item;
 }
 
 - (void)setupToolbar
 {
-	_toolbar = [[[NSToolbar alloc] initWithIdentifier:@"mainToolbar"] autorelease];
+	_toolbar = [[NSToolbar alloc] initWithIdentifier:@"mainToolbar"];
 	[_toolbar setDelegate:self];
 	[_toolbar setDisplayMode:NSToolbarDisplayModeIconOnly];
 	[_toolbar setSizeMode:NSToolbarSizeModeRegular];
@@ -272,7 +263,6 @@
 	else if ([_searchString isEqualToString:searchString]) 
 		return NO;
 	else {
-		[_searchString release];
 		_searchString = [searchString copy];
 	}
 	return YES;
@@ -312,11 +302,10 @@
 	
 	SymbolistRuntimeEntry *entry = [[SymbolistRuntimeEntry alloc] initWithName:[self searchString] mode:[self searchMode]];
 	[_lister setSearchEntry:entry];
-	[entry release];
 	
 	if ([self loadSearchResults]) {
 		if (addOldToHistory && oldEntry) {
-			NSLog(@"ADD");
+			DebugLog(@"ADD");
 			[_historyBack addObject:oldEntry];
 			[_historyForward removeAllObjects];
 		}
@@ -374,20 +363,20 @@
 {
 	BOOL flag = [_lister loadSearchResults];
 	if (!flag) {
-		NSLog(@"Couldn't load results.");
+		DebugLog(@"Couldn't load results.");
 		return NO;
 	}
 	
-	NSMutableDictionary *attributes = [NSMutableDictionary dictionaryWithObjectsAndKeys:[_userPrefs objectForKey:@"font"], NSFontAttributeName, nil];
+	NSMutableDictionary *attributes = [NSMutableDictionary dictionaryWithObjectsAndKeys:_userPrefs[@"font"], NSFontAttributeName, nil];
 	NSTextStorage *textStorage = [_textView textStorage];
 	[[textStorage mutableString] setString:@""];
 	[_lister appendInterfaceToAttributedString:textStorage attributes:attributes];
-	NSLog(@"Did load text view.");
+	DebugLog(@"Did load text view.");
 		
 	return YES;
 }
 
-- (void)showInfoView:sender
+- (void)showInfoView:(id)sender
 {
 	NSWindow *window = [_structInfoView window];
 	if (!window) {
@@ -419,14 +408,14 @@
 		[_structTextView setString:@""];
 }
 
-- (void)hideInfoView:sender
+- (void)hideInfoView:(id)sender
 {
 	NSWindow *window = [_structInfoView window];
 	[[window parentWindow] removeChildWindow:window];
 	[window orderOut:nil];
 }
 
-- (void)showFilterBar:sender
+- (void)showFilterBar:(id)sender
 {
 	if (!_isFilterBarVisible && !_filterBarAnimation) {
 		NSView *contentView = [[self windowForSheet] contentView];
@@ -444,24 +433,20 @@
 		[_filterBarView setFrame:barViewClosedFrame];
 //		[_filterBarView resizeSubviewsWithOldSize:barViewClosedFrame.size];
 		
-		NSDictionary *filterBarAnimation = [NSDictionary dictionaryWithObjectsAndKeys:
-											_filterBarView, NSViewAnimationTargetKey,
-											[NSValue valueWithRect:barViewClosedFrame], NSViewAnimationStartFrameKey,
-											[NSValue valueWithRect:barViewOpenFrame], NSViewAnimationEndFrameKey,
-											nil];
+		NSDictionary *filterBarAnimation = @{NSViewAnimationTargetKey: _filterBarView,
+											NSViewAnimationStartFrameKey: [NSValue valueWithRect:barViewClosedFrame],
+											NSViewAnimationEndFrameKey: [NSValue valueWithRect:barViewOpenFrame]};
 		
 		NSView *textScrollView = [_textView enclosingScrollView];
 		NSRect textViewClosedFrame = [textScrollView frame];
 		NSRect textViewOpenFrame = textViewClosedFrame;
 		textViewOpenFrame.size.height -= NSHeight(barViewOpenFrame);
 		
-		NSDictionary *textViewAnimation = [NSDictionary dictionaryWithObjectsAndKeys:
-										   textScrollView, NSViewAnimationTargetKey,
-										   [NSValue valueWithRect:textViewClosedFrame], NSViewAnimationStartFrameKey,
-										   [NSValue valueWithRect:textViewOpenFrame], NSViewAnimationEndFrameKey,
-										   nil];
+		NSDictionary *textViewAnimation = @{NSViewAnimationTargetKey: textScrollView,
+										   NSViewAnimationStartFrameKey: [NSValue valueWithRect:textViewClosedFrame],
+										   NSViewAnimationEndFrameKey: [NSValue valueWithRect:textViewOpenFrame]};
 		
-		_filterBarAnimation = [[NSViewAnimation alloc] initWithViewAnimations:[NSArray arrayWithObjects:filterBarAnimation, textViewAnimation, nil]];
+		_filterBarAnimation = [[NSViewAnimation alloc] initWithViewAnimations:@[filterBarAnimation, textViewAnimation]];
 		[_filterBarAnimation setDuration:0.25];
 		[_filterBarAnimation setDelegate:self];
 		[_filterBarAnimation startAnimation];
@@ -476,7 +461,7 @@
 //	[_filterField sendAction:[_filterField action] to:[_filterField target]];
 }
 
-- (void)hideFilterBar:sender
+- (void)hideFilterBar:(id)sender
 {
 	if (_isFilterBarVisible && !_filterBarAnimation) {
 		[_filterField setStringValue:@""];
@@ -495,24 +480,20 @@
 		[contentView addSubview:_filterBarView];
 		[[_filterBarView window] makeFirstResponder:_filterField];
 		
-		NSDictionary *filterBarAnimation = [NSDictionary dictionaryWithObjectsAndKeys:
-											_filterBarView, NSViewAnimationTargetKey,
-											[NSValue valueWithRect:barViewOpenFrame], NSViewAnimationStartFrameKey,
-											[NSValue valueWithRect:barViewClosedFrame], NSViewAnimationEndFrameKey,
-											nil];
+		NSDictionary *filterBarAnimation = @{NSViewAnimationTargetKey: _filterBarView,
+											NSViewAnimationStartFrameKey: [NSValue valueWithRect:barViewOpenFrame],
+											NSViewAnimationEndFrameKey: [NSValue valueWithRect:barViewClosedFrame]};
 		
 		NSView *textScrollView = [_textView enclosingScrollView];
 		NSRect textViewOpenFrame = [textScrollView frame];
 		NSRect textViewClosedFrame = textViewOpenFrame;
 		textViewClosedFrame.size.height += NSHeight(barViewOpenFrame);
 		
-		NSDictionary *textViewAnimation = [NSDictionary dictionaryWithObjectsAndKeys:
-										   textScrollView, NSViewAnimationTargetKey,
-										   [NSValue valueWithRect:textViewOpenFrame], NSViewAnimationStartFrameKey,
-										   [NSValue valueWithRect:textViewClosedFrame], NSViewAnimationEndFrameKey,
-										   nil];
+		NSDictionary *textViewAnimation = @{NSViewAnimationTargetKey: textScrollView,
+										   NSViewAnimationStartFrameKey: [NSValue valueWithRect:textViewOpenFrame],
+										   NSViewAnimationEndFrameKey: [NSValue valueWithRect:textViewClosedFrame]};
 		
-		_filterBarAnimation = [[NSViewAnimation alloc] initWithViewAnimations:[NSArray arrayWithObjects:filterBarAnimation, textViewAnimation, nil]];
+		_filterBarAnimation = [[NSViewAnimation alloc] initWithViewAnimations:@[filterBarAnimation, textViewAnimation]];
 		[_filterBarAnimation setDuration:0.25];
 		[_filterBarAnimation setDelegate:self];
 		[_filterBarAnimation startAnimation];
@@ -522,7 +503,6 @@
 - (void)animationDidEnd:(NSAnimation *)animation
 {
 	if (animation == _filterBarAnimation) {
-		[_filterBarAnimation release];
 		_filterBarAnimation = nil;
 		
 		_isFilterBarVisible = !_isFilterBarVisible;
@@ -577,47 +557,51 @@
 	if (_filterString == string || [_filterString isEqualToString:string])
 		return;
 	
-	[_filterString release];
 	_filterString = [string copy];
 	[_lister setFilterString:_filterString];
 	[self loadSearchResults];
 }
 
 - (void)filterSearchCompletes:(NSString *)filterString
-{NSLog(@"%@", NSStringFromSelector(_cmd));
-	if (!_filteredClassNames)
+{
+	if (!_filteredClassNames) {
 		_filteredClassNames = [NSMutableArray new];
-	else
+	}
+	else {
 		[_filteredClassNames removeAllObjects];
+	}
 	
-	unsigned int mode = [self searchMode];
+	unsigned int mode = (self.searchMode);
 	NSArray *names;
-	if (mode == SymbolistRuntimeModeClass)
+	if (mode == SymbolistRuntimeModeClass) {
 		names = [SymbolistRuntimeLister classNames];
-	else if (mode == SymbolistRuntimeModeProtocol)
+	}
+	else if (mode == SymbolistRuntimeModeProtocol) {
 		names = [SymbolistRuntimeLister protocolNames];
-	else
+	}
+	else {
 		return;
+	}
 	
 	if (filterString && ![filterString isEqualToString:@""]) {
-		NSString *string;
-		NSEnumerator *enumerator = [names objectEnumerator];
-		
-		if (_advancedSearchFlag) {
-			NSLog(@"Will search.");
+		if (NO && _advancedSearchFlag) {
+#if 0
+			DebugLog(@"Will search.");
 			PSStringSearchRef stringSearch = PSStringSearchCreate(filterString);
 			while ((string = [enumerator nextObject])) {
 				if (PSStringSearchMatchesString(stringSearch, string))
 					[_filteredClassNames addObject:string];
 			}
 			PSStringSearchFree(stringSearch);
-			NSLog(@"Did search.");
+			DebugLog(@"Did search.");
+#endif
 		}
 		else {
-			while ((string = [enumerator nextObject])) {
-				NSRange range = [string rangeOfString:filterString options:NSCaseInsensitiveSearch /*| NSLiteralSearch*/ | NSAnchoredSearch];
-				if (range.location == 0)
+			for (NSString *string in names) {
+				NSRange range = [string rangeOfString:filterString options:NSCaseInsensitiveSearch /*| NSLiteralSearch*/ /*| NSAnchoredSearch*/ ];
+				if (range.location != NSNotFound) {
 					[_filteredClassNames addObject:string];
+				}
 			}
 		}
 	}
@@ -647,7 +631,7 @@
 - (id)comboBox:(NSComboBox *)aComboBox objectValueForItemAtIndex:(int)index
 {
 	if (_filteredClassNames)
-		return [_filteredClassNames objectAtIndex:index];
+		return _filteredClassNames[index];
 	
 	/*unsigned int mode = [self searchMode];
 	NSArray *names;
@@ -666,7 +650,7 @@
 	
 	if (!_advancedSearchFlag) {
 		if ([_filteredClassNames count] > 0)
-			return [_filteredClassNames objectAtIndex:0];
+			return _filteredClassNames[0];
 	}
 	return nil;
 }
@@ -689,17 +673,14 @@
 
 - (void)comboBoxSelectionDidChange:(NSNotification *)notification
 {
-	if (_oldSearchString)
-		[_oldSearchString release];
-	
-	_oldSearchString = [[_searchField stringValue] retain];
+	_oldSearchString = [_searchField stringValue];
 }
 
 - (void)controlTextDidBeginEditing:(NSNotification *)aNotification
 {
 	NSControl *object = [aNotification object];
 	if (object == _searchField) {
-		NSText *fieldEditor = [[aNotification userInfo] objectForKey:@"NSFieldEditor"];
+		NSText *fieldEditor = [aNotification userInfo][@"NSFieldEditor"];
 		NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
 		[nc addObserver:self selector:@selector(textViewDidChangeSelection:) name:NSTextViewDidChangeSelectionNotification object:fieldEditor];
 		//[[_searchField cell] moveDown:nil];
@@ -716,11 +697,11 @@
 - (void)controlTextDidEndEditing:(NSNotification *)aNotification
 {
 	id object = [aNotification object];
-	NSLog(@"Did end %@", object);
+	DebugLog(@"Did end %@", object);
 	if (object == _filterField) {
 		[self filterSearchCompletes:[_filterField stringValue]];
 		
-		NSText *fieldEditor = [[aNotification userInfo] objectForKey:@"NSFieldEditor"];
+		NSText *fieldEditor = [aNotification userInfo][@"NSFieldEditor"];
 		NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
 		[nc removeObserver:self name:NSTextViewDidChangeSelectionNotification object:fieldEditor];
 		
@@ -777,7 +758,7 @@
 		NSAssert1(range.location < count, @"-%@; Index passed is greater than back history length.", NSStringFromSelector(_cmd));
 		
 		[_historyForward insertObject:currentEntry atIndex:0];
-		newEntry = [[_historyBack objectAtIndex:range.location] retain];
+		newEntry = _historyBack[range.location];
 		
 		if (range.length > 0) {
 			NSArray *clipped = [_historyBack subarrayWithRange:range];
@@ -793,7 +774,7 @@
 		NSRange range = NSMakeRange(0, index);
 		
 		[_historyBack addObject:currentEntry];
-		newEntry = [[_historyForward objectAtIndex:range.length] retain];
+		newEntry = _historyForward[range.length];
 		
 		if (range.length > 0) {
 			NSArray *clipped = [_historyForward subarrayWithRange:range];
@@ -806,7 +787,6 @@
 	
 	[self setSearchStringWithoutRecordingHistory:[newEntry name]];
 	[self setSearchMode:[newEntry mode]];
-	[newEntry release];
 	
 	[self updateSearch:NO];
 }
@@ -1029,7 +1009,7 @@ NSString *StringFromObjCTypeGetRange(const char *type, BOOL *outIsObject, BOOL *
 		unsigned long nameLength = 0;
 		
 		for (; ; type++) {
-			//NSLog(@"char:%c %u %d", type[0], endCount, (endCount == 1));
+			//DebugLog(@"char:%c %u %d", type[0], endCount, (endCount == 1));
 			if (type[0] == '}')
 				break;
 			else {
@@ -1099,7 +1079,7 @@ NSString *StringFromObjCTypeGetRange(const char *type, BOOL *outIsObject, BOOL *
 	if (outNameRange) {
 		outNameRange->location += [fullString length];
 		if ([fullString length] > 0)
-			NSLog(@"%u %u '%@'", outNameRange->location, [fullString length], fullString);
+			DebugLog(@"%u %u '%@'", outNameRange->location, [fullString length], fullString);
 	}
 	
 	[fullString appendString:argString];

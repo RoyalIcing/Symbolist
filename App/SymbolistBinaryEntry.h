@@ -38,16 +38,18 @@ struct SymbolistBinaryEntry_Flags {
 + (id)newWithNList64Bit:(struct nlist_64 *)nlist string:(void *)string;
 
 - (NSString *)name;
-- (NSString *)type;
-- (NSString *)value;
+//- (NSString *)type;
 
+- (NSString *)value;
 - (BOOL)hasNonZeroValue;
 
+- (BOOL)isDebug;
 - (BOOL)isObjCClass;
-- (BOOL)isObjCCategory;
+//- (BOOL)isObjCCategory;
 - (BOOL)isExternal;
 - (BOOL)isPrivate;
 - (BOOL)is64Bit;
+- (NSString *)externalDescription;
 
 @end
 

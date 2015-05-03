@@ -16,11 +16,26 @@
 
 #define TESTING 1
 
+
 typedef enum {
 	PSTotalBytesDescription,
 	PSFreeBytesDescription
 } PSBytesDescriptionType;
 NSString *PSGetDescriptionForByteCount(UInt64 bytes, PSBytesDescriptionType type);
+
+
+
+@implementation SymbolistBinaryListerMachOInfo
+
+@end
+
+
+
+@interface SymbolistBinaryLister ()
+
+@property (copy, nonatomic) NSArray *machOInfos;
+
+@end
 
 @implementation SymbolistBinaryLister
 
@@ -40,7 +55,7 @@ NSString *PSGetDescriptionForByteCount(UInt64 bytes, PSBytesDescriptionType type
 			CFBundleRef cfBundle = CFBundleCreate(kCFAllocatorDefault, url);
 			if (cfBundle != NULL) {
 				CFURLRef frameworksUrl = CFBundleCopyPrivateFrameworksURL(cfBundle);
-				NSLog(@"%@", frameworksUrl);
+				DebugLog(@"%@", frameworksUrl);
 				if (frameworksUrl != NULL) {
 					CFArrayRef frameworks = CFBundleCreateBundlesFromDirectory(kCFAllocatorDefault, frameworksUrl, NULL);
 					if (frameworks != NULL) {
@@ -52,7 +67,7 @@ NSString *PSGetDescriptionForByteCount(UInt64 bytes, PSBytesDescriptionType type
 							frameworkExecutableUrl = CFBundleCopyExecutableURL(framework);
 							if (frameworkExecutableUrl != NULL) {
 								//frameworkExecutableUrl = CFURLCopyPath(frameworkExecutableUrl);
-								NSLog(@"%@", frameworkExecutableUrl);
+								DebugLog(@"%@", frameworkExecutableUrl);
 								CFRelease(frameworkExecutableUrl);
 							}
 						}
@@ -61,15 +76,12 @@ NSString *PSGetDescriptionForByteCount(UInt64 bytes, PSBytesDescriptionType type
 			}*/
 			
 			NSBundle *bundle = [NSBundle bundleWithPath:path];
-			NSLog(@"%@", bundle);
+			DebugLog(@"%@", bundle);
 			if (bundle == nil) {
 				if (outError)
-					*outError = [NSError errorWithDomain:SymbolistBinaryErrorDomain code:SymbolistBinaryErrorInvalidBundle userInfo:[NSDictionary dictionaryWithObjectsAndKeys:
-					NSLocalizedStringFromTable(@"The directory is not a bundle.", @"SymbolistBinaryErrors", @"Invalid bundle reason."), NSLocalizedFailureReasonErrorKey,
-					NSLocalizedStringFromTable(@"Try application/framework bundles or executable tools.", @"SymbolistBinaryErrors", @"Unknown file type suggestion."), NSLocalizedRecoverySuggestionErrorKey,
-					nil]];
+					*outError = [NSError errorWithDomain:SymbolistBinaryErrorDomain code:SymbolistBinaryErrorInvalidBundle userInfo:@{NSLocalizedFailureReasonErrorKey: NSLocalizedStringFromTable(@"The directory is not a bundle.", @"SymbolistBinaryErrors", @"Invalid bundle reason."),
+					NSLocalizedRecoverySuggestionErrorKey: NSLocalizedStringFromTable(@"Try application/framework bundles or executable tools.", @"SymbolistBinaryErrors", @"Unknown file type suggestion.")}];
 				
-				[self release];
 				return nil;
 				//[NSException raise:NSInvalidArgumentException format:@"Path \"%@\" is not a bundle.", path];
 			}
@@ -77,74 +89,41 @@ NSString *PSGetDescriptionForByteCount(UInt64 bytes, PSBytesDescriptionType type
 			path = [bundle executablePath];
 			if (!path) {
 				if (outError)
-					*outError = [NSError errorWithDomain:SymbolistBinaryErrorDomain code:SymbolistBinaryErrorInvalidBundle userInfo:[NSDictionary dictionaryWithObjectsAndKeys:
-					NSLocalizedStringFromTable(@"An executable file was not found.", @"SymbolistBinaryErrors", @"Invalid bundle executable path reason."), NSLocalizedFailureReasonErrorKey,
-					NSLocalizedStringFromTable(@"Try application/framework bundles or executable tools.", @"SymbolistBinaryErrors", @"Unknown file type suggestion."), NSLocalizedRecoverySuggestionErrorKey,
-					nil]];
+					*outError = [NSError errorWithDomain:SymbolistBinaryErrorDomain code:SymbolistBinaryErrorInvalidBundle userInfo:@{NSLocalizedFailureReasonErrorKey: NSLocalizedStringFromTable(@"An executable file was not found.", @"SymbolistBinaryErrors", @"Invalid bundle executable path reason."),
+					NSLocalizedRecoverySuggestionErrorKey: NSLocalizedStringFromTable(@"Try application/framework bundles or executable tools.", @"SymbolistBinaryErrors", @"Unknown file type suggestion.")}];
 				
-				[self release];
 				return nil;
 			}
 		}
 		
-		_path = [path copy];
+		(self.path) = path;
 		
 		if (![self isValid]) {
 			NSDictionary *errorInfo;
 			
 			if (dirFlag) {
-				errorInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-					NSLocalizedStringFromTable(@"The executable file is an unknown type or could be corrupt.", @"SymbolistBinaryErrors", @"Invalid executable reason."), NSLocalizedFailureReasonErrorKey,
-					NSLocalizedStringFromTable(@"Try Mach-O based binaries.", @"SymbolistBinaryErrors", @"Invalid binary executable suggestion."), NSLocalizedRecoverySuggestionErrorKey,
-					nil];
+				errorInfo = @{NSLocalizedFailureReasonErrorKey: NSLocalizedStringFromTable(@"The executable file is an unknown type or could be corrupt.", @"SymbolistBinaryErrors", @"Invalid executable reason."),
+					NSLocalizedRecoverySuggestionErrorKey: NSLocalizedStringFromTable(@"Try Mach-O based binaries.", @"SymbolistBinaryErrors", @"Invalid binary executable suggestion.")};
 			}
 			else {
-				errorInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-					NSLocalizedStringFromTable(@"The file may not be an executable file or could be corrupt.", @"SymbolistBinaryErrors", @"Invalid file reason."), NSLocalizedFailureReasonErrorKey,
-					NSLocalizedStringFromTable(@"Try application/framework bundles or executable tools.", @"SymbolistBinaryErrors", @"Unknown file type suggestion."), NSLocalizedRecoverySuggestionErrorKey,
-					nil];
+				errorInfo = @{NSLocalizedFailureReasonErrorKey: NSLocalizedStringFromTable(@"The file may not be an executable file or could be corrupt.", @"SymbolistBinaryErrors", @"Invalid file reason."),
+					NSLocalizedRecoverySuggestionErrorKey: NSLocalizedStringFromTable(@"Try application/framework bundles or executable tools.", @"SymbolistBinaryErrors", @"Unknown file type suggestion.")};
 			}
 			
 			if (outError)
 				*outError = [NSError errorWithDomain:SymbolistBinaryErrorDomain code:SymbolistBinaryErrorInvalidBinaryFile userInfo:errorInfo];
 			
-			[self release];
 			return nil;
 		}
 	}
 	return self;
 }
 
-- (void)dealloc
-{
-	[self clear];
-	
-	[super dealloc];
-}
-
-
-- (void)clear
-{
-	if (_infos) {
-		uint32_t i;
-		for (i = 0; i < _archCount; i++) {
-			NSLog(@"CLEAR ARCH %u", i);
-			NSLog(@"RELEASE %ul", (unsigned long)[_infos[i].symbols count]);
-			[_infos[i].symbols release];
-			NSLog(@"RELEASE %ul: %@", (unsigned long)[_infos[i].symbolsNames count], _infos[i].symbolsNames);
-			[_infos[i].symbolsNames release];
-		}
-			
-		free(_infos);
-		_infos = NULL;
-	}
-}
-
 - (BOOL)isValid
 {
-	_fd = open([_path fileSystemRepresentation], O_RDONLY);
+	_fd = open([(self.path) fileSystemRepresentation], O_RDONLY);
 	if (_fd == -1) {
-		NSLog(@"Error opening file: %s", strerror(errno));
+		DebugLog(@"Error opening file: %s", strerror(errno));
 		return NO;
 	}
 	
@@ -156,40 +135,38 @@ NSString *PSGetDescriptionForByteCount(UInt64 bytes, PSBytesDescriptionType type
 	return NO;
 }
 
-- (void)execute
+- (void)process
 {
-	[self clear];
+	(self.machOInfos) = nil;
 	
-	_fd = open([_path fileSystemRepresentation], O_RDONLY);
+	_fd = open([(self.path) fileSystemRepresentation], O_RDONLY);
 	fcntl(_fd, F_NOCACHE, 1);
 	
 	if (_fd == -1) {
-		NSLog(@"Error opening file: %s", strerror(errno));
+		DebugLog(@"Error opening file: %s", strerror(errno));
 		return;
 	}
 	
 	BOOL success = [self processFatHeader:0];
 	
 	if (!success) {
-		SymbolistBinaryListerMachOInfo info;
-		success = [self processMachOHeader:0 getInfo:&info];
+		SymbolistBinaryListerMachOInfo *info = [self processMachOHeader:0];
 		
-		if (success) {
+		if (info) {
 			_flags.fatFlag = NO;
 			_archCount = 1;
-			_infos = malloc(sizeof(SymbolistBinaryListerMachOInfo));
-			_infos[0] = info;
+			(self.machOInfos) = @[info];
 		}
 	}
 	
 	close(_fd);
 	
 	if (!success) {
-		NSLog(@"Execution failed.");
+		DebugLog(@"Execution failed.");
 		return;
 	}
 	
-	NSLog(@"Execution succeeded.");
+	DebugLog(@"Execution succeeded.");
 }
 
 - (BOOL)checkIsFatHeader:(off_t)offset
@@ -249,9 +226,9 @@ NSString *PSGetDescriptionForByteCount(UInt64 bytes, PSBytesDescriptionType type
 	
 	_flags.fatFlag = YES;
 	_archCount = header.nfat_arch;
-	_infos = malloc(sizeof(SymbolistBinaryListerMachOInfo) * _archCount);
+	NSMutableArray *machOInfosMutable = [NSMutableArray arrayWithCapacity:_archCount];
 	
-	NSLog(@"Processing fat header; %@.", swapFlag ? @"did swap" : @"didn't swap");
+	DebugLog(@"Processing fat header; %@.", swapFlag ? @"did swap" : @"didn't swap");
 	
 	CFAbsoluteTime t = CFAbsoluteTimeGetCurrent();
 	
@@ -264,36 +241,38 @@ NSString *PSGetDescriptionForByteCount(UInt64 bytes, PSBytesDescriptionType type
 	for (i = 0; i < header.nfat_arch; i++)
 	{
 		if (arch[i].cputype == CPU_TYPE_POWERPC)
-			NSLog(@"# PowerPC CPU type.");
+			DebugLog(@"# PowerPC CPU type.");
 		else if (arch[i].cputype == CPU_TYPE_POWERPC64)
-			NSLog(@"# PowerPC 64-bit CPU type.");
+			DebugLog(@"# PowerPC 64-bit CPU type.");
 		else if (arch[i].cputype == CPU_TYPE_X86)
-			NSLog(@"# x86 CPU type.");
+			DebugLog(@"# x86 CPU type.");
 		else if ((arch[i].cputype & ~CPU_ARCH_MASK) == CPU_TYPE_X86 && (arch[i].cputype & CPU_ARCH_ABI64))
-			NSLog(@"# x86 64-bit CPU type.");
+			DebugLog(@"# x86 64-bit CPU type.");
 		else
-			NSLog(@"# CPU type: %u.", arch[i].cputype);
+			DebugLog(@"# CPU type: %u.", arch[i].cputype);
 		
-		NSLog(@"arch offset: %u.", arch[i].offset);
+		DebugLog(@"arch offset: %u.", arch[i].offset);
 		
-		SymbolistBinaryListerMachOInfo info;
-		BOOL success = [self processMachOHeader:(originalOffset + arch[i].offset) getInfo:&info];
-		if (success) {
-			_infos[i] = info;
+		SymbolistBinaryListerMachOInfo *info = [self processMachOHeader:(originalOffset + arch[i].offset)];
+		if (info) {
+			[machOInfosMutable addObject:info];
 		}
 		else {
-			NSLog(@"Unknown problem processing mach header.");
+			[machOInfosMutable addObject:[NSNull null]];
+			DebugLog(@"Unknown problem processing mach header.");
 		}
 	}
 	
 	free(arch);
 	
-	NSLog(@"%f", CFAbsoluteTimeGetCurrent() - t);
+	(self.machOInfos) = machOInfosMutable;
+	
+	DebugLog(@"%f", CFAbsoluteTimeGetCurrent() - t);
 	
 	return YES;
 }
 
-- (BOOL)processMachOHeader32Bit:(off_t)offset getInfo:(SymbolistBinaryListerMachOInfo *)outInfo
+- (SymbolistBinaryListerMachOInfo *)processMachOHeader32Bit:(off_t)offset
 {
 	const off_t originalOffset = offset;
 	
@@ -312,12 +291,12 @@ NSString *PSGetDescriptionForByteCount(UInt64 bytes, PSBytesDescriptionType type
 		return NO;
 	}
 	
-	NSLog(@"Processing mach header; %@.", swapFlag ? @"did swap" : @"didn't swap");
-	NSLog(@"Has %@ commands;", @(header.ncmds));
+	DebugLog(@"Processing mach header; %@.", swapFlag ? @"did swap" : @"didn't swap");
+	DebugLog(@"Has %@ commands;", @(header.ncmds));
 	
-	bzero(outInfo, sizeof(typeof(*outInfo)));
-	outInfo->cpuType = header.cputype;
-	outInfo->cpuSubtype = header.cpusubtype;
+	SymbolistBinaryListerMachOInfo *info = [SymbolistBinaryListerMachOInfo new];
+	(info.cpuType) = header.cputype;
+	(info.cpuSubtype) = header.cpusubtype;
 	
 	NSMutableArray *symbols = nil;
 	
@@ -339,14 +318,14 @@ NSString *PSGetDescriptionForByteCount(UInt64 bytes, PSBytesDescriptionType type
 		if (loadCommand.cmd == LC_SYMTAB)
 		{
 #if TESTING
-			NSLog(@"LC_SYMTAB at %u", offset);
+			DebugLog(@"LC_SYMTAB at %lld", offset);
 #endif
 			struct symtab_command symtabCommand = *(struct symtab_command *)commandPtr;
 			if (swapFlag)
 				swap_symtab_command(&symtabCommand, NXHostByteOrder());
 			
 #if TESTING
-			NSLog(@"string table offset:%u size:%u", symtabCommand.stroff, symtabCommand.strsize);
+			DebugLog(@"string table offset:%u size:%u", symtabCommand.stroff, symtabCommand.strsize);
 #endif
 			if (symbols == nil)
 				symbols = [[NSMutableArray alloc] initWithCapacity:symtabCommand.nsyms];
@@ -364,7 +343,7 @@ NSString *PSGetDescriptionForByteCount(UInt64 bytes, PSBytesDescriptionType type
 			SymbolistBinaryEntry *entry;
 			uint32_t i;
 			for (i = 0; i < symtabCommand.nsyms; i++) {
-				//				NSLog(@"%u %02x", nlist.n_un.n_strx, nlist.n_type);
+				//				DebugLog(@"%u %02x", nlist.n_un.n_strx, nlist.n_type);
 				/*if (nlist.n_type == N_UNDF) {
 				 nlistPtr++;
 				 continue;
@@ -377,7 +356,6 @@ NSString *PSGetDescriptionForByteCount(UInt64 bytes, PSBytesDescriptionType type
 				void *string = (void *)(stringTable + nlists[i].n_un.n_strx);
 				entry = [SymbolistBinaryEntry newWithNList32Bit:&nlists[i] string:string];
 				[symbols addObject:entry];
-				[entry release];
 			}
 			
 			free(nlists);
@@ -389,13 +367,12 @@ NSString *PSGetDescriptionForByteCount(UInt64 bytes, PSBytesDescriptionType type
 	
 	free(commands);
 	
-	outInfo->symbols = [symbols copy];
-	[symbols release];
+	(info.symbols) = symbols;
 	
-	return YES;
+	return info;
 }
 
-- (BOOL)processMachOHeader64Bit:(off_t)offset getInfo:(SymbolistBinaryListerMachOInfo *)outInfo
+- (SymbolistBinaryListerMachOInfo *)processMachOHeader64Bit:(off_t)offset
 {
 	const off_t originalOffset = offset;
 	
@@ -412,15 +389,14 @@ NSString *PSGetDescriptionForByteCount(UInt64 bytes, PSBytesDescriptionType type
 	else
 		return NO;
 	
-	NSLog(@"Processing mach header; %@.", swapFlag ? @"did swap" : @"didn't swap");
-	NSLog(@"Has %@ commands;", @(header.ncmds));
+	DebugLog(@"Processing mach header; %@.", swapFlag ? @"did swap" : @"didn't swap");
+	DebugLog(@"Has %@ commands;", @(header.ncmds));
 	
-	bzero(outInfo, sizeof(typeof(*outInfo)));
-	outInfo->cpuType = header.cputype;
-	outInfo->cpuSubtype = header.cpusubtype;
+	SymbolistBinaryListerMachOInfo *info = [SymbolistBinaryListerMachOInfo new];
+	(info.cpuType) = header.cputype;
+	(info.cpuSubtype) = header.cpusubtype;
 	
 	NSMutableArray *symbols = nil;
-	NSMutableArray *symbolNames = nil;
 	
 	struct load_command *commands = malloc(header.sizeofcmds);
 	[self readBytes:commands length:header.sizeofcmds offset:offset];
@@ -434,24 +410,24 @@ NSString *PSGetDescriptionForByteCount(UInt64 bytes, PSBytesDescriptionType type
 		commandPtr = (struct load_command *)((void *)commands + commandOffset);
 		
 		loadCommand = *commandPtr;
-		if (swapFlag)
+		if (swapFlag) {
 			swap_load_command(&loadCommand, NXHostByteOrder());
+		}
 		
 		if (loadCommand.cmd == LC_SYMTAB)
 		{
 #if TESTING
-			NSLog(@"LC_SYMTAB at %u", offset);
+			DebugLog(@"LC_SYMTAB at %lld", offset);
 #endif
 			struct symtab_command symtabCommand = *(struct symtab_command *)commandPtr;
 			if (swapFlag)
 				swap_symtab_command(&symtabCommand, NXHostByteOrder());
 			
 #if TESTING
-			NSLog(@"string table offset:%u size:%u", symtabCommand.stroff, symtabCommand.strsize);
+			DebugLog(@"string table offset:%u size:%u", symtabCommand.stroff, symtabCommand.strsize);
 #endif
 			if (!symbols) {
 				symbols = [NSMutableArray arrayWithCapacity:symtabCommand.nsyms];
-				symbolNames = [NSMutableArray arrayWithCapacity:symtabCommand.nsyms];
 			}
 			
 			struct nlist_64 *nlists = malloc(sizeof(struct nlist_64) * symtabCommand.nsyms);
@@ -465,7 +441,7 @@ NSString *PSGetDescriptionForByteCount(UInt64 bytes, PSBytesDescriptionType type
 			SymbolistBinaryEntry *entry;
 			uint32_t i;
 			for (i = 0; i < symtabCommand.nsyms; i++) {
-				//				NSLog(@"%u %02x", nlist.n_un.n_strx, nlist.n_type);
+				//				DebugLog(@"%u %02x", nlist.n_un.n_strx, nlist.n_type);
 				/*if (nlist.n_type == N_UNDF) {
 				 nlistPtr++;
 				 continue;
@@ -479,9 +455,7 @@ NSString *PSGetDescriptionForByteCount(UInt64 bytes, PSBytesDescriptionType type
 				entry = [SymbolistBinaryEntry newWithNList64Bit:&nlists[i] string:string];
 				
 				[symbols addObject:entry];
-				[symbolNames addObject:[entry name]];
 				
-				[entry autorelease];
 			}
 			
 			free(nlists);
@@ -494,27 +468,26 @@ NSString *PSGetDescriptionForByteCount(UInt64 bytes, PSBytesDescriptionType type
 	free(commands);
 	
 	if (symbols) {
-		outInfo->symbols = [symbols copy];
-		//outInfo->symbolsNames = [symbolNames copy];
-	}
-	else {
-		outInfo->symbols = nil;
-		outInfo->symbolsNames = nil;
+		(info.symbols) = symbols;
 	}
 
 	
-	return YES;
+	return info;
 }
 
-- (BOOL)processMachOHeader:(off_t)offset getInfo:(SymbolistBinaryListerMachOInfo *)outInfo;
+- (SymbolistBinaryListerMachOInfo *)processMachOHeader:(off_t)offset
 {
-	BOOL flag;
-	flag = [self processMachOHeader32Bit:offset getInfo:outInfo];
-	if (flag)
-		return YES;
+	SymbolistBinaryListerMachOInfo *info;
 	
-	flag = [self processMachOHeader64Bit:offset getInfo:outInfo];
-	return flag;
+	info = [self processMachOHeader32Bit:offset];
+	if (info) {
+		return info;
+	}
+	else {
+		info = [self processMachOHeader64Bit:offset];
+	}
+	
+	return info;
 }
 
 - (BOOL)isFat
@@ -527,24 +500,30 @@ NSString *PSGetDescriptionForByteCount(UInt64 bytes, PSBytesDescriptionType type
 	return _archCount;
 }
 
+- (SymbolistBinaryListerMachOInfo *)machOInfoForArchAtIndex:(NSUInteger)index
+{
+	id<NSObject> info = (self.machOInfos)[index];
+	if ([info isKindOfClass:[SymbolistBinaryListerMachOInfo class]]) {
+		return info;
+	}
+	else { // NSNull
+		return nil;
+	}
+}
+
 - (cpu_type_t)cpuTypeForArchAtIndex:(uint32_t)index
 {
-	return _infos[index].cpuType;
+	return [self machOInfoForArchAtIndex:index].cpuType;
 }
 
 - (cpu_type_t)cpuSubtypeForArchAtIndex:(uint32_t)index
 {
-	return _infos[index].cpuSubtype;
+	return [self machOInfoForArchAtIndex:index].cpuSubtype;
 }
 
 - (NSArray *)symbolsForArchAtIndex:(uint32_t)index
 {
-	return [[_infos[index].symbols retain] autorelease];
-}
-
-- (NSArray *)symbolNamesForArchAtIndex:(uint32_t)index
-{
-	return [[_infos[index].symbolsNames retain] autorelease];
+	return [self machOInfoForArchAtIndex:index].symbols;
 }
 
 - (ssize_t)readBytes:(void *)buffer length:(size_t)length offset:(off_t)offset
@@ -552,7 +531,7 @@ NSString *PSGetDescriptionForByteCount(UInt64 bytes, PSBytesDescriptionType type
 #if TESTING
 	CFAbsoluteTime t = CFAbsoluteTimeGetCurrent();
 	ssize_t size = pread(_fd, buffer, length, offset);
-	printf("%f seconds to read %u bytes.\n", CFAbsoluteTimeGetCurrent() - t, length);
+	printf("%f seconds to read %zu bytes.\n", CFAbsoluteTimeGetCurrent() - t, length);
 	return size;
 #else
 	return pread(_fd, buffer, length, offset);

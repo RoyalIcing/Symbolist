@@ -15,15 +15,16 @@ NSString *SymbolistAppFindPboardDidChange = @"SymbolistAppFindPboardDidChange";
 //		NSLog(@"%s", _dyld_get_image_name(i));
 	
 	Dl_info dlInfo;
-	if (dladdr(&NSZeroRect, &dlInfo))
-		NSLog(@"%s %s", dlInfo.dli_fname, dlInfo.dli_sname);
+	if (dladdr(&NSZeroRect, &dlInfo)) {
+		DebugLog(@"%s %s", dlInfo.dli_fname, dlInfo.dli_sname);
+	}
 	
 	char *demangledSymbol;
 	
 	demangledSymbol = [SymbolistBinaryEntry demangledString:"_ZZ11getCentroidPfS_S_E4C.53"];
-	NSLog(@"%s", demangledSymbol);
+	DebugLog(@"%s", demangledSymbol);
 	demangledSymbol = [SymbolistBinaryEntry demangledString:"_ZZ11getCentroidPfS_S_E4C.00"];
-	NSLog(@"%s", demangledSymbol);
+	DebugLog(@"%s", demangledSymbol);
 	
 //	demangledSymbol = [SymbolistBinaryEntry demangledString:"SPAAAAAA_"];
 //	NSLog(@"%s", demangledSymbol);
